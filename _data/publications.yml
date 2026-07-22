@@ -1,0 +1,6 @@
+# Group publications by venue/source.
+- source: "Venue Name (e.g. IEEE)"
+  items:
+    - title: "Publication Title"
+      date: "2024"
+      link: ""

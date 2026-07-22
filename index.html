@@ -1,0 +1,103 @@
+---
+layout: default
+---
+
+<section id="hero" class="hero">
+  <h1>{{ site.author }}</h1>
+  <p class="tagline">{{ site.tagline }}</p>
+  <p>{{ site.description }}</p>
+</section>
+
+<section id="about" class="section">
+  <h2>About</h2>
+  <p>
+    Write a short bio here: your background, what you focus on, and what
+    you're interested in. Two to four sentences is plenty.
+  </p>
+</section>
+
+<section id="experience" class="section">
+  <h2>Work Experience</h2>
+  {% for job in site.data.experience %}
+  <div class="card">
+    {% if job.image and job.image != "" %}
+    <img src="{{ job.image | relative_url }}" alt="{{ job.company }}">
+    {% endif %}
+    <div class="card-body">
+      <h3>{{ job.role }} <span class="muted">· {{ job.company }}</span></h3>
+      <p class="meta">{{ job.dates }}{% if job.location and job.location != "" %} · {{ job.location }}{% endif %}</p>
+      <p>{{ job.description }}</p>
+      {% if job.link and job.link != "" %}
+      <a href="{{ job.link }}" target="_blank" rel="noopener">Explore &rarr;</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</section>
+
+<section id="education" class="section">
+  <h2>Education</h2>
+  {% for edu in site.data.education %}
+  <div class="card">
+    <div class="card-body">
+      <h3>{{ edu.school }}</h3>
+      <p class="meta">{{ edu.degree }} · {{ edu.dates }}</p>
+      <p>{{ edu.description }}</p>
+      {% if edu.link and edu.link != "" %}
+      <a href="{{ edu.link }}" target="_blank" rel="noopener">Explore &rarr;</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</section>
+
+<section id="publications" class="section">
+  <h2>Publications</h2>
+  {% for group in site.data.publications %}
+  <h3 class="pub-source">{{ group.source }}</h3>
+  <ul class="pub-list">
+    {% for item in group.items %}
+    <li>
+      <span>{{ item.title }}</span>
+      <span class="meta">{{ item.date }}</span>
+      {% if item.link and item.link != "" %}
+      <a href="{{ item.link }}" target="_blank" rel="noopener">View &rarr;</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endfor %}
+</section>
+
+<section id="projects" class="section">
+  <h2>Projects</h2>
+  <div class="grid">
+    {% for project in site.data.projects %}
+    <div class="card">
+      {% if project.image and project.image != "" %}
+      <img src="{{ project.image | relative_url }}" alt="{{ project.title }}">
+      {% endif %}
+      <div class="card-body">
+        <h3>{{ project.title }}</h3>
+        <p class="meta">{{ project.dates }}</p>
+        <p>{{ project.description }}</p>
+        {% if project.link and project.link != "" %}
+        <a href="{{ project.link }}" target="_blank" rel="noopener">Read more &rarr;</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="skills" class="section">
+  <h2>Skills</h2>
+  {% for group in site.data.skills %}
+  <h3 class="skills-group">{{ group.group }}</h3>
+  <ul class="chip-list">
+    {% for item in group.items %}
+    <li class="chip">{{ item }}</li>
+    {% endfor %}
+  </ul>
+  {% endfor %}
+</section>

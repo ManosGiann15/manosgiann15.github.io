@@ -1,0 +1,27 @@
+title: Your Name
+tagline: Your Role / Title
+description: >-
+  A short one- or two-sentence description of who you are and what you do.
+  Shown in search engines and social previews.
+url: "https://manosgiann15.github.io"
+author: Your Name
+email: you@example.com
+
+# Social / contact links shown in the footer and hero.
+# Leave a value blank ("") to hide that icon.
+social:
+  github: manosgiann15
+  linkedin: ""
+  scholar: ""
+  twitter: ""
+
+markdown: kramdown
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - node_modules

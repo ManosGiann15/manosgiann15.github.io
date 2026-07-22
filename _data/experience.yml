@@ -1,0 +1,10 @@
+# One entry per job. Add or remove entries as needed.
+- company: "Company Name"
+  role: "Your Job Title"
+  dates: "Jan 2024 - Present"
+  location: "City, Country"
+  description: >
+    One or two sentences describing your responsibilities and the impact
+    you had in this role.
+  link: ""       # optional: company website or project page
+  image: ""      # optional: path under /assets/images/

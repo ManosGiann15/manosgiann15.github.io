@@ -1,0 +1,12 @@
+# Grouped skill lists shown as icon/label chips.
+- group: "Languages"
+  items:
+    - "Python"
+    - "C++"
+- group: "Frameworks & Tools"
+  items:
+    - "PyTorch"
+    - "Git"
+- group: "Software"
+  items:
+    - "Blender"

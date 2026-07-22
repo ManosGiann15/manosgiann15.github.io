@@ -1,0 +1,19 @@
+<footer id="contact" class="site-footer">
+  <h2>Get in touch</h2>
+  <p><a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
+  <ul class="social-links">
+    {% if site.social.github and site.social.github != "" %}
+    <li><a href="https://github.com/{{ site.social.github }}" target="_blank" rel="noopener">GitHub</a></li>
+    {% endif %}
+    {% if site.social.linkedin and site.social.linkedin != "" %}
+    <li><a href="https://linkedin.com/in/{{ site.social.linkedin }}" target="_blank" rel="noopener">LinkedIn</a></li>
+    {% endif %}
+    {% if site.social.scholar and site.social.scholar != "" %}
+    <li><a href="{{ site.social.scholar }}" target="_blank" rel="noopener">Google Scholar</a></li>
+    {% endif %}
+    {% if site.social.twitter and site.social.twitter != "" %}
+    <li><a href="https://twitter.com/{{ site.social.twitter }}" target="_blank" rel="noopener">Twitter</a></li>
+    {% endif %}
+  </ul>
+  <p class="copyright">&copy; {{ 'now' | date: "%Y" }} {{ site.author }}</p>
+</footer>

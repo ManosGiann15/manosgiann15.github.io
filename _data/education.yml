@@ -1,0 +1,7 @@
+# One entry per degree / research role.
+- school: "University Name"
+  degree: "Degree, Major"
+  dates: "2020 - 2024"
+  description: >
+    Brief note on focus area, thesis, or notable coursework/research.
+  link: ""       # optional: "Explore" link, e.g. thesis or lab page
