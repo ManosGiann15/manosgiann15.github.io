@@ -218,6 +218,18 @@
   .cert-modal-close:hover{border-color:var(--muted)}
   .cert-modal-body iframe{flex:1;width:100%;height:100%;border:0;background:#fff}
 
+  /* photo lightbox */
+  .photo-lightbox{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px}
+  .photo-lightbox.open{display:flex}
+  .photo-lightbox-backdrop{position:absolute;inset:0;background:rgba(6,8,12,.85);backdrop-filter:blur(3px)}
+  .photo-lightbox img{position:relative;z-index:1;max-width:92vw;max-height:88vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .photo-lightbox-close{
+    position:fixed;top:20px;right:20px;z-index:2;width:34px;height:34px;border-radius:50%;
+    border:1px solid var(--line);background:var(--bg-2);color:var(--text);font-size:20px;
+    line-height:1;cursor:pointer;
+  }
+  .photo-lightbox-close:hover{border-color:var(--muted)}
+
   /* research card */
   .cards2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
   @media(max-width:720px){.cards2{grid-template-columns:1fr}}
@@ -261,6 +273,9 @@
   .media.is-empty .ph-ico{width:26px;height:26px;color:var(--faint)}
   .media.is-empty .ph-t{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.03em}
   .media.is-empty .ph-s{font-family:var(--mono);font-size:11px;color:var(--faint)}
+
+  .media.zoomable{cursor:zoom-in;transition:transform .2s,filter .2s}
+  .media.zoomable:hover{transform:scale(1.02);filter:brightness(1.06)}
 
   .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
   @media(max-width:720px){.gallery{grid-template-columns:1fr 1fr}}
@@ -373,7 +388,7 @@
   <div class="job reveal">
     <div class="when">Sept 2024 — Sept 2025</div>
     <div>
-      <h3>Head of Autonomous Systems</h3>
+      <h3>Head of Autonomous System</h3>
       <div class="org">Prom Racing FSAE · NTUA</div>
       <ul>
         <li>Led the autonomous systems team across perception, sensor fusion, and navigation.</li>
@@ -395,10 +410,10 @@
 
         <!-- PHOTO GALLERY -->
         <div class="gallery">
-          <img class="media ratio-4-3" style="border-radius:10px" src="assets/prom1.jpg" alt="Prom Racing autonomous car">
-          <img class="media ratio-4-3" style="border-radius:10px" src="assets/prom2.jpg" alt="Prom Racing autonomous car">
-          <img class="media ratio-4-3" style="border-radius:10px" src="assets/prom3.jpg" alt="Prom Racing autonomous car">
-          <img class="media ratio-4-3" style="border-radius:10px" src="assets/prom4.jpg" alt="Prom Racing autonomous car">
+          <img class="media ratio-4-3 zoomable" style="border-radius:10px" src="assets/prom1.jpg" alt="Prom Racing autonomous car">
+          <img class="media ratio-4-3 zoomable" style="border-radius:10px" src="assets/prom2.jpg" alt="Prom Racing autonomous car">
+          <img class="media ratio-4-3 zoomable" style="border-radius:10px" src="assets/prom3.jpg" alt="Prom Racing autonomous car">
+          <img class="media ratio-4-3 zoomable" style="border-radius:10px" src="assets/prom4.jpg" alt="Prom Racing autonomous car">
         </div>
       </div>
     </div>
@@ -479,6 +494,11 @@
       <div class="cc-title">Universal AI Course</div>
       <div class="cc-org">NCSR Demokritos</div>
     </button>
+    <button type="button" class="cert-card is-link" data-src="assets/ai-in-medicine.png">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+      <div class="cc-title">AI in Medicine</div>
+      <div class="cc-org">SSHMS Chapter of Athens &amp; UniAI</div>
+    </button>
   </div>
 </section>
 
@@ -489,6 +509,13 @@
     <button type="button" class="cert-modal-close" data-close aria-label="Close">&times;</button>
     <iframe id="certModalFrame" title="Certificate preview"></iframe>
   </div>
+</div>
+
+<!-- PHOTO LIGHTBOX -->
+<div class="photo-lightbox" id="photoLightbox" aria-hidden="true">
+  <div class="photo-lightbox-backdrop" data-photo-close></div>
+  <button type="button" class="photo-lightbox-close" data-photo-close aria-label="Close">&times;</button>
+  <img id="photoLightboxImg" src="" alt="">
 </div>
 
 <!-- ============ PROJECTS ============ -->
@@ -655,6 +682,29 @@
       card.addEventListener('click',()=>open(card.dataset.src));
     });
     modal.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',close));
+    document.addEventListener('keydown',e=>{if(e.key==='Escape') close();});
+  })();
+
+  /* photo lightbox */
+  (function(){
+    const box=document.getElementById('photoLightbox');
+    const img=document.getElementById('photoLightboxImg');
+    if(!box||!img) return;
+    function open(src,alt){
+      img.src=src;
+      img.alt=alt||'';
+      box.classList.add('open');
+      box.setAttribute('aria-hidden','false');
+    }
+    function close(){
+      box.classList.remove('open');
+      box.setAttribute('aria-hidden','true');
+      img.src='';
+    }
+    document.querySelectorAll('img.zoomable').forEach(el=>{
+      el.addEventListener('click',()=>open(el.src,el.alt));
+    });
+    box.querySelectorAll('[data-photo-close]').forEach(el=>el.addEventListener('click',close));
     document.addEventListener('keydown',e=>{if(e.key==='Escape') close();});
   })();
 
