@@ -1,103 +1,675 @@
----
-layout: default
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Manos Giannakis — Robotics &amp; ML Engineer</title>
+<meta name="author" content="Manos Giannakis" />
+<meta name="description" content="Robotics and machine-learning engineer. Autonomous perception for Formula Student Driverless, and graph neural networks for neutrino event reconstruction." />
+<meta property="og:title" content="Manos Giannakis" />
+<meta property="og:description" content="Robotics and machine-learning engineer. Autonomous perception and graph neural networks." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://manosgiann15.github.io/" />
+<meta name="twitter:card" content="summary" />
 
-<section id="hero" class="hero">
-  <h1>{{ site.author }}</h1>
-  <p class="tagline">{{ site.tagline }}</p>
-  <p>{{ site.description }}</p>
-</section>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-<section id="about" class="section">
-  <h2>About</h2>
-  <p>
-    Write a short bio here: your background, what you focus on, and what
-    you're interested in. Two to four sentences is plenty.
-  </p>
-</section>
+<style>
+  :root{
+    --bg:#0d1017;
+    --bg-2:#12161f;
+    --bg-3:#171c27;
+    --line:#232a37;
+    --line-soft:#1c222d;
+    --text:#e7eaf0;
+    --muted:#8b93a3;
+    --faint:#5b6472;
+    --accent:#f6b23c;      /* signal amber */
+    --accent-2:#35d0ba;    /* sensor teal, used sparingly */
+    --accent-ink:#0d1017;
 
-<section id="experience" class="section">
-  <h2>Work Experience</h2>
-  {% for job in site.data.experience %}
-  <div class="card">
-    {% if job.image and job.image != "" %}
-    <img src="{{ job.image | relative_url }}" alt="{{ job.company }}">
-    {% endif %}
-    <div class="card-body">
-      <h3>{{ job.role }} <span class="muted">· {{ job.company }}</span></h3>
-      <p class="meta">{{ job.dates }}{% if job.location and job.location != "" %} · {{ job.location }}{% endif %}</p>
-      <p>{{ job.description }}</p>
-      {% if job.link and job.link != "" %}
-      <a href="{{ job.link }}" target="_blank" rel="noopener">Explore &rarr;</a>
-      {% endif %}
+    --display:"Bricolage Grotesque",-apple-system,sans-serif;
+    --body:"Instrument Sans",-apple-system,system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+
+    --maxw:1080px;
+    --pad:clamp(20px,5vw,64px);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+
+  a{color:inherit;text-decoration:none}
+
+  ::selection{background:var(--accent);color:var(--accent-ink)}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+
+  /* ---------- utility label ---------- */
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--faint);
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{
+    content:"";width:22px;height:1px;background:var(--accent);flex:none;
+  }
+
+  /* ---------- nav ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    height:60px;
+  }
+  .brand{
+    font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:.02em;
+    display:flex;align-items:center;gap:9px;
+  }
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 0 rgba(246,178,60,.5);animation:pulse 2.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(246,178,60,.45)}70%{box-shadow:0 0 0 7px rgba(246,178,60,0)}100%{box-shadow:0 0 0 0 rgba(246,178,60,0)}}
+  @media (prefers-reduced-motion:reduce){.brand .dot{animation:none}}
+
+  nav.links{display:flex;gap:26px}
+  nav.links a{
+    font-family:var(--mono);font-size:13px;color:var(--muted);
+    letter-spacing:.03em;position:relative;padding:4px 0;transition:color .2s;
+  }
+  nav.links a:hover,nav.links a.active{color:var(--text)}
+  nav.links a::after{content:"";position:absolute;left:0;bottom:-2px;height:1px;width:0;background:var(--accent);transition:width .25s}
+  nav.links a:hover::after,nav.links a.active::after{width:100%}
+  .menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--text);
+    font-family:var(--mono);font-size:12px;padding:7px 12px;border-radius:6px;cursor:pointer}
+
+  @media(max-width:720px){
+    nav.links{position:fixed;inset:60px 0 auto 0;flex-direction:column;gap:0;
+      background:var(--bg-2);border-bottom:1px solid var(--line);
+      transform:translateY(-140%);transition:transform .3s;padding:8px 0}
+    nav.links.open{transform:translateY(0)}
+    nav.links a{padding:14px var(--pad);border-top:1px solid var(--line-soft)}
+    .menu-btn{display:block}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:88vh;display:flex;align-items:center;overflow:hidden}
+  #field{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.9}
+  .hero::after{ /* fade the field into the page bottom */
+    content:"";position:absolute;left:0;right:0;bottom:0;height:40%;z-index:1;
+    background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none;
+  }
+  .hero-inner{position:relative;z-index:2;width:100%;padding-top:40px;padding-bottom:64px}
+  .status{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.05em;color:var(--muted);
+    display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:26px;
+  }
+  .status b{color:var(--accent-2);font-weight:500}
+  h1.name{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(46px,9vw,104px);
+    line-height:.96;
+    letter-spacing:-.02em;
+    margin:0 0 18px;
+  }
+  .role{
+    font-family:var(--mono);font-size:clamp(14px,2vw,18px);
+    color:var(--accent);letter-spacing:.04em;margin:0 0 22px;
+  }
+  .lede{max-width:56ch;font-size:clamp(17px,2.1vw,20px);color:var(--muted);margin:0 0 34px}
+  .lede strong{color:var(--text);font-weight:500}
+  .cta-row{display:flex;flex-wrap:wrap;gap:14px}
+  .btn{
+    font-family:var(--mono);font-size:13.5px;letter-spacing:.02em;
+    padding:13px 20px;border-radius:8px;border:1px solid var(--line);
+    display:inline-flex;align-items:center;gap:9px;transition:.2s;
+  }
+  .btn .arrow{transition:transform .2s}
+  .btn:hover .arrow{transform:translate(2px,-2px)}
+  .btn-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+  .btn-primary:hover{background:#ffc75a}
+  .btn-ghost:hover{border-color:var(--muted);background:var(--bg-2)}
+
+  /* ---------- sections ---------- */
+  section{padding-top:clamp(72px,10vw,120px)}
+  .sec-head{margin-bottom:44px}
+  .sec-head h2{
+    font-family:var(--display);font-weight:600;
+    font-size:clamp(28px,4.4vw,44px);letter-spacing:-.015em;
+    margin:14px 0 0;line-height:1.05;
+  }
+  .sec-head p{color:var(--muted);max-width:60ch;margin:14px 0 0}
+
+  /* about + facts */
+  .about-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:clamp(28px,5vw,64px);align-items:start}
+  @media(max-width:800px){.about-grid{grid-template-columns:1fr}}
+  .about-body p{font-size:clamp(18px,2.3vw,22px);line-height:1.55;color:var(--text);margin:0 0 20px}
+  .about-body p.sub{font-size:17px;color:var(--muted)}
+  .facts{border:1px solid var(--line);border-radius:14px;background:var(--bg-2);overflow:hidden}
+  .fact{display:flex;justify-content:space-between;gap:16px;padding:15px 18px;border-bottom:1px solid var(--line-soft);font-size:14px}
+  .fact:last-child{border-bottom:0}
+  .fact .k{font-family:var(--mono);color:var(--faint);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+  .fact .v{color:var(--text);text-align:right}
+
+  /* work timeline */
+  .job{
+    display:grid;grid-template-columns:180px 1fr;gap:clamp(16px,4vw,48px);
+    padding:34px 0;border-top:1px solid var(--line);
+  }
+  .job:first-of-type{border-top:0}
+  @media(max-width:720px){.job{grid-template-columns:1fr;gap:14px}}
+  .job .when{font-family:var(--mono);font-size:12.5px;color:var(--faint);letter-spacing:.03em;padding-top:5px}
+  .job .when .now{color:var(--accent-2)}
+  .job h3{font-family:var(--display);font-weight:600;font-size:clamp(20px,2.6vw,25px);margin:0 0 4px;letter-spacing:-.01em}
+  .job .org{font-family:var(--mono);font-size:13px;color:var(--accent);margin:0 0 14px}
+  .job ul{margin:0;padding:0;list-style:none}
+  .job li{position:relative;padding-left:20px;margin-bottom:9px;color:var(--muted);font-size:15.5px}
+  .job li::before{content:"";position:absolute;left:0;top:11px;width:6px;height:1px;background:var(--accent)}
+  .job li strong{color:var(--text);font-weight:500}
+
+  /* research card */
+  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:720px){.cards2{grid-template-columns:1fr}}
+  .rcard{border:1px solid var(--line);border-radius:14px;background:var(--bg-2);padding:26px;transition:.25s}
+  .rcard:hover{border-color:#33404f;transform:translateY(-2px)}
+  .rcard .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-2)}
+  .rcard h3{font-family:var(--display);font-weight:600;font-size:21px;margin:12px 0 10px;letter-spacing:-.01em}
+  .rcard p{color:var(--muted);font-size:15px;margin:0}
+  .rcard .meta{margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+
+  /* projects */
+  .proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:720px){.proj-grid{grid-template-columns:1fr}}
+  .proj{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg-2);
+    display:flex;flex-direction:column;transition:.25s}
+  .proj:hover{border-color:#33404f;transform:translateY(-2px)}
+  .proj .body{padding:22px 22px 24px}
+  .proj .ksmall{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .proj h3{font-family:var(--display);font-weight:600;font-size:20px;margin:9px 0 8px;letter-spacing:-.01em}
+  .proj p{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{font-family:var(--mono);font-size:11.5px;color:var(--muted);border:1px solid var(--line);
+    padding:4px 9px;border-radius:20px}
+
+  /* ===== MEDIA SLOTS — replace these with your photos/videos ===== */
+  .media{position:relative;width:100%;background:var(--bg-3);overflow:hidden;display:block}
+  .media img,.media video{display:block;width:100%;height:100%;object-fit:cover}
+  .media.ratio-16-9{aspect-ratio:16/9}
+  .media.ratio-4-3{aspect-ratio:4/3}
+  .media.ratio-1-1{aspect-ratio:1/1}
+  /* placeholder look (remove .is-empty once you add real media) */
+  .media.is-empty{
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;
+    border:1px dashed #3a4453;
+    background:
+      repeating-linear-gradient(45deg,transparent,transparent 11px,rgba(255,255,255,.012) 11px,rgba(255,255,255,.012) 22px),
+      var(--bg-3);
+    text-align:center;padding:22px;
+  }
+  .media.is-empty .ph-ico{width:26px;height:26px;color:var(--faint)}
+  .media.is-empty .ph-t{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.03em}
+  .media.is-empty .ph-s{font-family:var(--mono);font-size:11px;color:var(--faint)}
+
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+  @media(max-width:720px){.gallery{grid-template-columns:1fr 1fr}}
+
+  /* skills */
+  .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  @media(max-width:720px){.skills-grid{grid-template-columns:1fr}}
+  .skillcol h4{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--faint);margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line-soft)}
+  .skillcol .chips .chip{color:var(--text)}
+  .certs{margin-top:40px;display:flex;flex-wrap:wrap;gap:10px}
+  .cert{font-family:var(--mono);font-size:12.5px;color:var(--muted);border:1px solid var(--line-soft);
+    background:var(--bg-2);border-radius:8px;padding:9px 13px}
+  .cert span{color:var(--accent-2)}
+
+  /* contact */
+  .contact{
+    border:1px solid var(--line);border-radius:18px;background:var(--bg-2);
+    padding:clamp(30px,6vw,60px);text-align:center;
+  }
+  .contact h2{font-family:var(--display);font-weight:600;font-size:clamp(30px,5.5vw,52px);
+    letter-spacing:-.02em;margin:0 0 16px;line-height:1.02}
+  .contact p{color:var(--muted);max-width:48ch;margin:0 auto 30px}
+  .contact-links{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+
+  footer.foot{padding:48px 0 60px;border-top:1px solid var(--line-soft);margin-top:clamp(70px,10vw,120px)}
+  .foot-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;
+    font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top"><span class="dot"></span>manos.giannakis</a>
+    <button class="menu-btn" aria-expanded="false" aria-controls="menu">menu</button>
+    <nav class="links" id="menu">
+      <a href="#work">work</a>
+      <a href="#research">research</a>
+      <a href="#projects">projects</a>
+      <a href="#skills">skills</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <div class="status reveal">
+      <span>Athens, Greece</span>
+      <span>Autonomous perception · ML research</span>
+      <span><b>● available for freelance</b></span>
+    </div>
+    <h1 class="name reveal">Manos<br>Giannakis</h1>
+    <p class="role reveal">Robotics &amp; Machine Learning Engineer</p>
+    <p class="lede reveal">I build <strong>perception and ML systems for autonomous machines</strong>. I led autonomous systems at a Formula Student Driverless team, and I research graph neural networks for neutrino event reconstruction.</p>
+    <div class="cta-row reveal">
+      <a class="btn btn-primary" href="#projects">See the work <span class="arrow">↗</span></a>
+      <a class="btn btn-ghost" href="#contact">Get in touch</a>
     </div>
   </div>
-  {% endfor %}
 </section>
 
-<section id="education" class="section">
-  <h2>Education</h2>
-  {% for edu in site.data.education %}
-  <div class="card">
-    <div class="card-body">
-      <h3>{{ edu.school }}</h3>
-      <p class="meta">{{ edu.degree }} · {{ edu.dates }}</p>
-      <p>{{ edu.description }}</p>
-      {% if edu.link and edu.link != "" %}
-      <a href="{{ edu.link }}" target="_blank" rel="noopener">Explore &rarr;</a>
-      {% endif %}
+<!-- ============ ABOUT ============ -->
+<section id="about" class="wrap">
+  <div class="about-grid reveal">
+    <div class="about-body">
+      <div class="eyebrow">About</div>
+      <p style="margin-top:22px">I work on perception and machine learning for robots and autonomous vehicles — sensor fusion, real-time detection, and the models behind them.</p>
+      <p>I led the autonomous systems team at Prom Racing, NTUA's Formula Student Driverless team, and I research graph neural networks for neutrino event reconstruction with NCSR Demokritos and the Fermilab collaboration.</p>
+      <p class="sub">Lately I'm focused on memory mechanisms and state-space models. Off the clock, it's motorsport and JDM cars.</p>
     </div>
+    <aside class="facts">
+      <div class="fact"><span class="k">Based in</span><span class="v">Athens, Greece</span></div>
+      <div class="fact"><span class="k">Focus</span><span class="v">Perception · ML research</span></div>
+      <div class="fact"><span class="k">Degree</span><span class="v">BSc Digital Systems</span></div>
+      <div class="fact"><span class="k">Next</span><span class="v">MSc @ NTUA, 2026</span></div>
+      <div class="fact"><span class="k">Stack</span><span class="v">ROS2 · PyTorch · Linux</span></div>
+      <div class="fact"><span class="k">Languages</span><span class="v">English · Greek</span></div>
+    </aside>
   </div>
-  {% endfor %}
 </section>
 
-<section id="publications" class="section">
-  <h2>Publications</h2>
-  {% for group in site.data.publications %}
-  <h3 class="pub-source">{{ group.source }}</h3>
-  <ul class="pub-list">
-    {% for item in group.items %}
-    <li>
-      <span>{{ item.title }}</span>
-      <span class="meta">{{ item.date }}</span>
-      {% if item.link and item.link != "" %}
-      <a href="{{ item.link }}" target="_blank" rel="noopener">View &rarr;</a>
-      {% endif %}
-    </li>
-    {% endfor %}
-  </ul>
-  {% endfor %}
-</section>
+<!-- ============ WORK ============ -->
+<section id="work" class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Experience</div>
+    <h2>Where I've worked</h2>
+  </div>
 
-<section id="projects" class="section">
-  <h2>Projects</h2>
-  <div class="grid">
-    {% for project in site.data.projects %}
-    <div class="card">
-      {% if project.image and project.image != "" %}
-      <img src="{{ project.image | relative_url }}" alt="{{ project.title }}">
-      {% endif %}
-      <div class="card-body">
-        <h3>{{ project.title }}</h3>
-        <p class="meta">{{ project.dates }}</p>
-        <p>{{ project.description }}</p>
-        {% if project.link and project.link != "" %}
-        <a href="{{ project.link }}" target="_blank" rel="noopener">Read more &rarr;</a>
-        {% endif %}
+  <div class="job reveal">
+    <div class="when">Sept 2024 — <span class="now">Present</span></div>
+    <div>
+      <h3>Head of Autonomous Systems</h3>
+      <div class="org">Prom Racing FSAE · NTUA</div>
+      <ul>
+        <li>Led the autonomous systems team across perception, sensor fusion, and navigation.</li>
+        <li>Built <strong>IMU / INS and camera–LiDAR fusion</strong> for robust autonomous navigation and environment understanding.</li>
+        <li>Designed a <strong>YOLO-Pose</strong> model unifying cone detection and pose estimation, with knowledge distillation to cut inference time.</li>
+        <li>Secured the team's first <strong>LiDAR sponsorship</strong> — a milestone pursued for three years — and ran two sub-team recruitments.</li>
+      </ul>
+
+      <!-- ===================================================================
+           MEDIA: Prom Racing highlight video + photos.
+           1. Drop your files in /assets  (e.g. assets/prom-run.mp4, assets/prom-1.jpg)
+           2. Delete the <div class="media is-empty"> placeholder for that slot
+           3. Uncomment the matching real tag below it
+           =================================================================== -->
+
+      <!-- VIDEO SLOT -->
+      <!-- <video class="media ratio-16-9" style="margin-top:24px;border-radius:12px" controls preload="metadata" poster="assets/prom-poster.jpg">
+             <source src="assets/prom-run.mp4" type="video/mp4">
+           </video> -->
+      <figure class="media ratio-16-9 is-empty" style="margin-top:24px;border-radius:12px">
+        <svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <div class="ph-t">Add a highlight video</div>
+        <div class="ph-s">assets/prom-run.mp4 · 16:9</div>
+      </figure>
+
+      <!-- PHOTO GALLERY (3 images) -->
+      <div class="gallery">
+        <!-- <img class="media ratio-4-3" style="border-radius:10px" src="assets/prom-1.jpg" alt="Autonomous car on track"> -->
+        <figure class="media ratio-4-3 is-empty" style="border-radius:10px">
+          <div class="ph-t">Photo 1</div><div class="ph-s">assets/prom-1.jpg</div>
+        </figure>
+        <figure class="media ratio-4-3 is-empty" style="border-radius:10px">
+          <div class="ph-t">Photo 2</div><div class="ph-s">assets/prom-2.jpg</div>
+        </figure>
+        <figure class="media ratio-4-3 is-empty" style="border-radius:10px">
+          <div class="ph-t">Photo 3</div><div class="ph-s">assets/prom-3.jpg</div>
+        </figure>
       </div>
     </div>
-    {% endfor %}
+  </div>
+
+  <div class="job reveal">
+    <div class="when">Oct 2023 — Sept 2024</div>
+    <div>
+      <h3>Autonomous Systems Engineer</h3>
+      <div class="org">Prom Racing FSAE · NTUA</div>
+      <ul>
+        <li>Customized an <strong>RRT-based path planner</strong> in ROS2 for autonomous navigation and decision-making.</li>
+        <li>Ran early R&amp;D evaluating the viability of computer-vision projects for the team.</li>
+        <li>Presented the perception pipeline at the <strong>ZEISS competition — 4th of 42 teams worldwide</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="job reveal">
+    <div class="when">Sept 2024 — <span class="now">Present</span></div>
+    <div>
+      <h3>Student Researcher</h3>
+      <div class="org">NCSR Demokritos · Institute of Nuclear &amp; Particle Physics</div>
+      <ul>
+        <li>Graph neural networks (<strong>GraphNet</strong>) for neutrino event reconstruction in the ANNIE experiment.</li>
+        <li>Co-built an open-source <strong>ROOT → SQLite / Parquet / H5</strong> converter, adopted by the Fermilab collaboration.</li>
+        <li>Extensive hands-on Linux: system navigation, shell scripting, and troubleshooting.</li>
+      </ul>
+    </div>
   </div>
 </section>
 
-<section id="skills" class="section">
-  <h2>Skills</h2>
-  {% for group in site.data.skills %}
-  <h3 class="skills-group">{{ group.group }}</h3>
-  <ul class="chip-list">
-    {% for item in group.items %}
-    <li class="chip">{{ item }}</li>
-    {% endfor %}
-  </ul>
-  {% endfor %}
+<!-- ============ RESEARCH / EDUCATION ============ -->
+<section id="research" class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Research &amp; Education</div>
+    <h2>The science side</h2>
+    <p>Graph neural networks for particle physics, and a degree in digital systems.</p>
+  </div>
+  <div class="cards2">
+    <div class="rcard reveal">
+      <div class="tag">Thesis · ANNIE experiment</div>
+      <h3>Neutrino event reconstruction with GNNs</h3>
+      <p>Designed and fine-tuned models on the GraphNet architecture to reconstruct neutrino events from PMT pulse data — supervised by NCSR Demokritos' Institute of Nuclear &amp; Particle Physics, in collaboration with Fermilab.</p>
+      <div class="meta">GraphNet · PyTorch · graph learning</div>
+    </div>
+    <div class="rcard reveal">
+      <div class="tag">Degree · 2021 — 2025</div>
+      <h3>BSc in Digital Systems</h3>
+      <p>University of Piraeus. Coursework and projects across machine learning, computer vision, digital image processing, and multi-agent systems. Native-level English (studied in Vancouver, Canada).</p>
+      <div class="meta">University of Piraeus, Greece</div>
+    </div>
+  </div>
+
+  <!-- OPTIONAL: research figure / poster -->
+  <!-- <img class="media ratio-16-9" style="margin-top:22px;border-radius:12px" src="assets/annie-figure.jpg" alt="ANNIE GNN result figure"> -->
+  <figure class="media ratio-16-9 is-empty reveal" style="margin-top:22px;border-radius:12px">
+    <svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 4-4 5 5"/></svg>
+    <div class="ph-t">Add a result figure or poster (optional)</div>
+    <div class="ph-s">assets/annie-figure.jpg · 16:9</div>
+  </figure>
 </section>
+
+<!-- ============ PROJECTS ============ -->
+<section id="projects" class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Selected projects</div>
+    <h2>Things I've built</h2>
+    <p>Add a photo, GIF, or short clip to any card — the media slot sits at the top of each one.</p>
+  </div>
+
+  <div class="proj-grid">
+
+    <!-- PROJECT 1 -->
+    <article class="proj reveal">
+      <!-- <img class="media ratio-16-9" src="assets/proj-perception.jpg" alt="Perception pipeline"> -->
+      <figure class="media ratio-16-9 is-empty">
+        <div class="ph-t">Project image / clip</div>
+        <div class="ph-s">assets/proj-perception.jpg</div>
+      </figure>
+      <div class="body">
+        <div class="ksmall">Autonomous perception</div>
+        <h3>Cone detection &amp; pose estimation</h3>
+        <p>YOLO-Pose unifying detection and pose estimation for Formula Student, with custom augmented datasets and knowledge distillation for real-time inference.</p>
+        <div class="chips"><span class="chip">YOLO-Pose</span><span class="chip">PyTorch</span><span class="chip">ROS2</span></div>
+      </div>
+    </article>
+
+    <!-- PROJECT 2 -->
+    <article class="proj reveal">
+      <!-- <img class="media ratio-16-9" src="assets/proj-sentiment.jpg" alt="Sentiment analysis"> -->
+      <figure class="media ratio-16-9 is-empty">
+        <div class="ph-t">Project image / clip</div>
+        <div class="ph-s">assets/proj-sentiment.jpg</div>
+      </figure>
+      <div class="body">
+        <div class="ksmall">NLP · Machine learning</div>
+        <h3>Sentiment analysis system</h3>
+        <p>An NLP pipeline combining classic techniques and ML models, tuned for accuracy and computational efficiency for scalable deployment.</p>
+        <div class="chips"><span class="chip">NLP</span><span class="chip">Python</span><span class="chip">scikit-learn</span></div>
+      </div>
+    </article>
+
+    <!-- PROJECT 3 -->
+    <article class="proj reveal">
+      <!-- <img class="media ratio-16-9" src="assets/proj-multiagent.jpg" alt="Multi-agent system"> -->
+      <figure class="media ratio-16-9 is-empty">
+        <div class="ph-t">Project image / clip</div>
+        <div class="ph-s">assets/proj-multiagent.jpg</div>
+      </figure>
+      <div class="body">
+        <div class="ksmall">Multi-agent systems</div>
+        <h3>Negotiating multi-agent system</h3>
+        <p>A collaborative multi-agent system with dynamic task allocation, negotiation protocols, and performance evaluation.</p>
+        <div class="chips"><span class="chip">Multi-agent</span><span class="chip">Java</span><span class="chip">Negotiation</span></div>
+      </div>
+    </article>
+
+    <!-- PROJECT 4 — template you can duplicate for new work -->
+    <article class="proj reveal">
+      <!-- <img class="media ratio-16-9" src="assets/proj-4.jpg" alt=""> -->
+      <figure class="media ratio-16-9 is-empty">
+        <div class="ph-t">Add another project</div>
+        <div class="ph-s">duplicate this card</div>
+      </figure>
+      <div class="body">
+        <div class="ksmall">Category</div>
+        <h3>New project title</h3>
+        <p>One or two sentences on what it does and what you built. Copy this whole &lt;article&gt; block to add more.</p>
+        <div class="chips"><span class="chip">tag</span><span class="chip">tag</span></div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============ SKILLS ============ -->
+<section id="skills" class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Toolkit</div>
+    <h2>Skills</h2>
+  </div>
+  <div class="skills-grid reveal">
+    <div class="skillcol">
+      <h4>Languages</h4>
+      <div class="chips">
+        <span class="chip">Python</span><span class="chip">C++</span><span class="chip">C</span>
+        <span class="chip">Java</span><span class="chip">MATLAB</span><span class="chip">SQL</span>
+        <span class="chip">Bash</span><span class="chip">HTML</span>
+      </div>
+    </div>
+    <div class="skillcol">
+      <h4>Frameworks &amp; Tools</h4>
+      <div class="chips">
+        <span class="chip">ROS2</span><span class="chip">PyTorch</span><span class="chip">Linux</span>
+        <span class="chip">Git</span><span class="chip">GraphNet</span><span class="chip">YOLO</span>
+      </div>
+    </div>
+    <div class="skillcol">
+      <h4>Domains</h4>
+      <div class="chips">
+        <span class="chip">Computer Vision</span><span class="chip">Sensor Fusion</span>
+        <span class="chip">Deep Learning</span><span class="chip">Perception</span>
+        <span class="chip">Multi-Agent Systems</span><span class="chip">Data Engineering</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="certs reveal">
+    <div class="cert"><span>›</span> Fundamentals of Deep Learning — NVIDIA</div>
+    <div class="cert"><span>›</span> Unmanned Aerial Systems Module — Hellenic Air Force</div>
+    <div class="cert"><span>›</span> HIAS AI Summer School — NCSR Demokritos</div>
+    <div class="cert"><span>›</span> Universal AI Course — NCSR Demokritos</div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact" class="wrap">
+  <div class="contact reveal">
+    <div class="eyebrow" style="justify-content:center">Contact</div>
+    <h2 style="margin-top:16px">Let's build something.</h2>
+    <p>Open to robotics and ML work, research collaborations, and interesting problems. The fastest way to reach me is email.</p>
+    <div class="contact-links">
+      <a class="btn btn-primary" href="mailto:manosgiannakis15@gmail.com">manosgiannakis15@gmail.com</a>
+      <a class="btn btn-ghost" href="https://github.com/manosgiann15" target="_blank" rel="noopener">GitHub <span class="arrow">↗</span></a>
+      <!-- Add your LinkedIn: paste your profile URL below and uncomment -->
+      <!-- <a class="btn btn-ghost" href="https://www.linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a> -->
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© 2026 Manos Giannakis</span>
+    <span>Athens, GR · Robotics · ML · Autonomy</span>
+  </div>
+</footer>
+
+<script>
+  /* mobile menu */
+  const btn=document.querySelector('.menu-btn');
+  const menu=document.getElementById('menu');
+  btn.addEventListener('click',()=>{
+    const open=menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded',open);
+  });
+  menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>menu.classList.remove('open')));
+
+  /* scroll reveal */
+  const io=new IntersectionObserver((es)=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  /* active nav link */
+  const secs=[...document.querySelectorAll('section[id]')];
+  const navlinks=[...document.querySelectorAll('nav.links a')];
+  const spy=new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        navlinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id));
+      }
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  secs.forEach(s=>spy.observe(s));
+
+  /* ---------- ambient point-cloud / cone field (his subject: driverless perception) ---------- */
+  (function(){
+    const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    const c=document.getElementById('field');
+    if(!c) return;
+    const ctx=c.getContext('2d');
+    let w,h,dpr,pts=[],cones=[],t=0;
+
+    function size(){
+      dpr=Math.min(window.devicePixelRatio||1,2);
+      const r=c.getBoundingClientRect();
+      w=r.width;h=r.height;
+      c.width=w*dpr;c.height=h*dpr;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      build();
+    }
+    function build(){
+      const density=Math.floor((w*h)/9000);
+      pts=[];
+      for(let i=0;i<density;i++){
+        pts.push({
+          x:Math.random()*w, y:Math.random()*h,
+          z:Math.random(),                 // depth → colour + size
+          vx:(Math.random()-.5)*0.12,
+          vy:(Math.random()-.5)*0.12,
+        });
+      }
+      // a few "cones" = the thing a driverless car looks for
+      cones=[];
+      const n=Math.min(7,Math.max(3,Math.floor(w/230)));
+      for(let i=0;i<n;i++){
+        cones.push({x:(i+.5)/n*w+(Math.random()-.5)*60, y:h*(.35+Math.random()*.5), ph:Math.random()*6.28});
+      }
+    }
+    function mix(a,b,t){return a+(b-a)*t}
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      // faint depth grid
+      ctx.strokeStyle='rgba(120,140,170,0.05)';ctx.lineWidth=1;
+      const gy=h*0.62;
+      for(let i=0;i<7;i++){
+        const yy=gy+i*i*3.2;
+        ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(w,yy);ctx.stroke();
+      }
+      // points (LiDAR-intensity colour: teal→amber by depth)
+      for(const p of pts){
+        p.x+=p.vx;p.y+=p.vy;
+        if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;
+        const r=mix(246,53,p.z), g=mix(178,208,p.z), b=mix(60,186,p.z);
+        const a=0.10+p.z*0.30;
+        const sz=0.6+p.z*1.6;
+        ctx.fillStyle='rgba('+(r|0)+','+(g|0)+','+(b|0)+','+a+')';
+        ctx.beginPath();ctx.arc(p.x,p.y,sz,0,6.283);ctx.fill();
+      }
+      // cones: soft amber glow that gently breathes
+      for(const co of cones){
+        const pulse=reduce?0.5:(Math.sin(t*0.015+co.ph)*0.5+0.5);
+        const R=10+pulse*7;
+        const grad=ctx.createRadialGradient(co.x,co.y,0,co.x,co.y,R*2.4);
+        grad.addColorStop(0,'rgba(246,178,60,'+(0.16+pulse*0.14)+')');
+        grad.addColorStop(1,'rgba(246,178,60,0)');
+        ctx.fillStyle=grad;
+        ctx.beginPath();ctx.arc(co.x,co.y,R*2.4,0,6.283);ctx.fill();
+        ctx.fillStyle='rgba(246,178,60,'+(0.5+pulse*0.3)+')';
+        ctx.beginPath();ctx.arc(co.x,co.y,1.7,0,6.283);ctx.fill();
+      }
+      t++;
+      if(!reduce) raf=requestAnimationFrame(draw);
+    }
+    let raf;
+    size();
+    draw();
+    window.addEventListener('resize',()=>{cancelAnimationFrame(raf);size();if(reduce)draw();});
+  })();
+</script>
+</body>
+</html>
