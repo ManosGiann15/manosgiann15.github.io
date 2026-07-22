@@ -219,6 +219,7 @@
   .media.ratio-16-9{aspect-ratio:16/9}
   .media.ratio-4-3{aspect-ratio:4/3}
   .media.ratio-1-1{aspect-ratio:1/1}
+  .media.ratio-9-16{aspect-ratio:9/16}
   /* placeholder look (remove .is-empty once you add real media) */
   .media.is-empty{
     display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;
@@ -234,6 +235,14 @@
 
   .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
   @media(max-width:720px){.gallery{grid-template-columns:1fr 1fr}}
+
+  .media-row{display:flex;gap:24px;margin-top:24px;align-items:flex-start}
+  .media-row .media.ratio-9-16{width:min(240px,40%);flex:none;border-radius:12px}
+  .media-row .gallery{flex:1;margin-top:0;align-self:stretch;grid-template-columns:1fr 1fr}
+  @media(max-width:720px){
+    .media-row{flex-direction:column}
+    .media-row .media.ratio-9-16{width:min(260px,70%);margin:0 auto}
+  }
 
   /* skills */
   .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
@@ -275,11 +284,12 @@
     <a class="brand" href="#top"><span class="dot"></span>manos.giannakis</a>
     <button class="menu-btn" aria-expanded="false" aria-controls="menu">menu</button>
     <nav class="links" id="menu">
-      <a href="#work">work</a>
-      <a href="#research">research</a>
-      <a href="#projects">projects</a>
-      <a href="#skills">skills</a>
-      <a href="#contact">contact</a>
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#research">Research</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
     </nav>
   </div>
 </header>
@@ -290,12 +300,12 @@
   <div class="wrap hero-inner">
     <div class="status reveal">
       <span>Athens, Greece</span>
-      <span>Autonomous perception · ML research</span>
-      <span><b>● available for freelance</b></span>
+      <span>Autonomous Perception · AI Research</span>
+      <span><b>● Available for Freelance</b></span>
     </div>
     <h1 class="name reveal">Manos<br>Giannakis</h1>
     <p class="role reveal">Robotics &amp; Machine Learning Engineer</p>
-    <p class="lede reveal">I build <strong>perception and ML systems for autonomous machines</strong>. I led autonomous systems at a Formula Student Driverless team, and I research graph neural networks for neutrino event reconstruction.</p>
+    <p class="lede reveal">I led the Autonomous System of <strong> NTUA's Prom Racing</strong> and researched graph neural networks at <strong>NCSR Demokritos</strong>.</p>
     <div class="cta-row reveal">
       <a class="btn btn-primary" href="#projects">See the work <span class="arrow">↗</span></a>
       <a class="btn btn-ghost" href="#contact">Get in touch</a>
@@ -308,11 +318,12 @@
   <div class="about-grid reveal">
     <div class="about-body">
       <div class="eyebrow">About</div>
-      <p style="margin-top:22px">I work on perception and machine learning for robots and autonomous vehicles — sensor fusion, real-time detection, and the models behind them.</p>
-      <p>I led the autonomous systems team at Prom Racing, NTUA's Formula Student Driverless team, and I research graph neural networks for neutrino event reconstruction with NCSR Demokritos and the Fermilab collaboration.</p>
-      <p class="sub">Lately I'm focused on memory mechanisms and state-space models. Off the clock, it's motorsport and JDM cars.</p>
+      <p style="margin-top:22px">During my studies I joined a Formula Student team, a decision that led me to my love for robotics and physical AI.</p>
+      <p> In parallel, I did my thesis in collaboration with the Institute of Nuclear and Particle Physics at NCSR Demokritos: "Neutrino Event Reconstruction with Graph Neural Networks in ANNIE."</p>
+      <p class="sub">Now I'm working to bridge robotics into healthcare, doing research in a field that helps people.</p>
     </div>
     <aside class="facts">
+      <img class="media ratio-1-1" src="assets/portrait.png" alt="Manos Giannakis" style="object-position:center 20%">
       <div class="fact"><span class="k">Based in</span><span class="v">Athens, Greece</span></div>
       <div class="fact"><span class="k">Focus</span><span class="v">Perception · ML research</span></div>
       <div class="fact"><span class="k">Degree</span><span class="v">BSc Digital Systems</span></div>
@@ -331,7 +342,7 @@
   </div>
 
   <div class="job reveal">
-    <div class="when">Sept 2024 — <span class="now">Present</span></div>
+    <div class="when">Sept 2024 — Sept 2025</div>
     <div>
       <h3>Head of Autonomous Systems</h3>
       <div class="org">Prom Racing FSAE · NTUA</div>
@@ -343,34 +354,23 @@
       </ul>
 
       <!-- ===================================================================
-           MEDIA: Prom Racing highlight video + photos.
-           1. Drop your files in /assets  (e.g. assets/prom-run.mp4, assets/prom-1.jpg)
-           2. Delete the <div class="media is-empty"> placeholder for that slot
-           3. Uncomment the matching real tag below it
+           MEDIA: Prom Racing highlight video (vertical) + photos.
+           Photos: drop files in /assets as prom-1.jpg, prom-2.jpg, prom-3.jpg,
+           uncomment each <img> tag, and delete its <figure is-empty> placeholder.
            =================================================================== -->
 
-      <!-- VIDEO SLOT -->
-      <!-- <video class="media ratio-16-9" style="margin-top:24px;border-radius:12px" controls preload="metadata" poster="assets/prom-poster.jpg">
-             <source src="assets/prom-run.mp4" type="video/mp4">
-           </video> -->
-      <figure class="media ratio-16-9 is-empty" style="margin-top:24px;border-radius:12px">
-        <svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        <div class="ph-t">Add a highlight video</div>
-        <div class="ph-s">assets/prom-run.mp4 · 16:9</div>
-      </figure>
+      <div class="media-row">
+        <video class="media ratio-9-16" controls preload="metadata">
+          <source src="assets/prom-run.mp4" type="video/mp4">
+        </video>
 
-      <!-- PHOTO GALLERY (3 images) -->
-      <div class="gallery">
-        <!-- <img class="media ratio-4-3" style="border-radius:10px" src="assets/prom-1.jpg" alt="Autonomous car on track"> -->
-        <figure class="media ratio-4-3 is-empty" style="border-radius:10px">
-          <div class="ph-t">Photo 1</div><div class="ph-s">assets/prom-1.jpg</div>
-        </figure>
-        <figure class="media ratio-4-3 is-empty" style="border-radius:10px">
-          <div class="ph-t">Photo 2</div><div class="ph-s">assets/prom-2.jpg</div>
-        </figure>
-        <figure class="media ratio-4-3 is-empty" style="border-radius:10px">
-          <div class="ph-t">Photo 3</div><div class="ph-s">assets/prom-3.jpg</div>
-        </figure>
+        <!-- PHOTO GALLERY -->
+        <div class="gallery">
+          <img class="media ratio-4-3" style="border-radius:10px" src="assets/prom1.jpg" alt="Prom Racing autonomous car">
+          <img class="media ratio-4-3" style="border-radius:10px" src="assets/prom2.jpg" alt="Prom Racing autonomous car">
+          <img class="media ratio-4-3" style="border-radius:10px" src="assets/prom3.jpg" alt="Prom Racing autonomous car">
+          <img class="media ratio-4-3" style="border-radius:10px" src="assets/prom4.jpg" alt="Prom Racing autonomous car">
+        </div>
       </div>
     </div>
   </div>
