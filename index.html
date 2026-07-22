@@ -189,6 +189,35 @@
   .job li::before{content:"";position:absolute;left:0;top:11px;width:6px;height:1px;background:var(--accent)}
   .job li strong{color:var(--text);font-weight:500}
 
+  /* certificate cards (research section) */
+  .certs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+  .cert-card{border:1px solid var(--line);border-radius:14px;background:var(--bg-2);
+    padding:20px;display:flex;flex-direction:column;gap:10px;transition:.2s;
+    font:inherit;text-align:left;width:100%;color:inherit}
+  .cert-card svg{width:22px;height:22px;color:var(--accent-2)}
+  .cert-card .cc-title{font-family:var(--display);font-weight:600;font-size:15px;color:var(--text)}
+  .cert-card .cc-org{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .cert-card.is-link{cursor:pointer}
+  .cert-card.is-link:hover{border-color:#33404f;transform:translateY(-2px)}
+  .cert-card.is-static{opacity:.7;cursor:default}
+
+  /* certificate viewer modal */
+  .cert-modal{position:fixed;inset:0;z-index:100;display:none}
+  .cert-modal.open{display:block}
+  .cert-modal-backdrop{position:absolute;inset:0;background:rgba(6,8,12,.75);backdrop-filter:blur(3px)}
+  .cert-modal-body{
+    position:relative;z-index:1;margin:5vh auto;width:min(760px,92vw);height:88vh;
+    background:var(--bg-2);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  .cert-modal-close{
+    position:absolute;top:10px;right:10px;z-index:2;width:34px;height:34px;border-radius:50%;
+    border:1px solid var(--line);background:var(--bg-2);color:var(--text);font-size:20px;
+    line-height:1;cursor:pointer;
+  }
+  .cert-modal-close:hover{border-color:var(--muted)}
+  .cert-modal-body iframe{flex:1;width:100%;height:100%;border:0;background:#fff}
+
   /* research card */
   .cards2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
   @media(max-width:720px){.cards2{grid-template-columns:1fr}}
@@ -349,8 +378,8 @@
       <ul>
         <li>Led the autonomous systems team across perception, sensor fusion, and navigation.</li>
         <li>Built <strong>IMU / INS and camera–LiDAR fusion</strong> for robust autonomous navigation and environment understanding.</li>
-        <li>Designed a <strong>YOLO-Pose</strong> model unifying cone detection and pose estimation, with knowledge distillation to cut inference time.</li>
-        <li>Secured the team's first <strong>LiDAR sponsorship</strong> — a milestone pursued for three years — and ran two sub-team recruitments.</li>
+        <li>Built a <strong>YOLO-Pose</strong> model unifying cone detection and pose estimation, fused with <strong>LiDAR calibration</strong> for a robust perception system; distilled to run on Intel integrated graphics, halving inference time and doubling depth-estimation performance.</li>
+        <li>Secured the team's first <strong>LiDAR sponsorship</strong>, a milestone pursued for three years, and ran two sub-team recruitments.</li>
       </ul>
 
       <!-- ===================================================================
@@ -395,8 +424,8 @@
       <div class="org">NCSR Demokritos · Institute of Nuclear &amp; Particle Physics</div>
       <ul>
         <li>Graph neural networks (<strong>GraphNet</strong>) for neutrino event reconstruction in the ANNIE experiment.</li>
-        <li>Co-built an open-source <strong>ROOT → SQLite / Parquet / H5</strong> converter, adopted by the Fermilab collaboration.</li>
-        <li>Extensive hands-on Linux: system navigation, shell scripting, and troubleshooting.</li>
+        <li>Co-built <a href="https://zenodo.org/records/16942988" target="_blank" rel="noopener" style="color:var(--accent-2);text-decoration:underline;text-underline-offset:3px"><strong>root2data</strong></a>, an open-source <strong>ROOT → SQLite / Parquet / H5</strong> converter, adopted by the Fermilab collaboration.</li>
+        <li>Co-authored a paper on this work, currently under review at <strong>JINST</strong> (Journal of Instrumentation).</li>
       </ul>
     </div>
   </div>
@@ -413,25 +442,54 @@
     <div class="rcard reveal">
       <div class="tag">Thesis · ANNIE experiment</div>
       <h3>Neutrino event reconstruction with GNNs</h3>
-      <p>Designed and fine-tuned models on the GraphNet architecture to reconstruct neutrino events from PMT pulse data — supervised by NCSR Demokritos' Institute of Nuclear &amp; Particle Physics, in collaboration with Fermilab.</p>
-      <div class="meta">GraphNet · PyTorch · graph learning</div>
+      <p>Designed and fine-tuned models on the GraphNet architecture to reconstruct neutrino events from PMT pulse data, supervised by NCSR Demokritos' Institute of Nuclear &amp; Particle Physics, in collaboration with Fermilab.</p>
+      <div class="meta">GraphNet · PyTorch · Graph Neural Networks</div>
+      <a href="assets/thesis-preview.pdf" target="_blank" rel="noopener" style="display:inline-block;margin-top:14px;color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-family:var(--mono);font-size:13px">View thesis &rarr;</a>
     </div>
     <div class="rcard reveal">
       <div class="tag">Degree · 2021 — 2025</div>
       <h3>BSc in Digital Systems</h3>
-      <p>University of Piraeus. Coursework and projects across machine learning, computer vision, digital image processing, and multi-agent systems. Native-level English (studied in Vancouver, Canada).</p>
+      <p>University of Piraeus. Coursework and projects across machine learning, computer vision, digital image processing, and multi-agent systems.</p>
       <div class="meta">University of Piraeus, Greece</div>
     </div>
   </div>
 
-  <!-- OPTIONAL: research figure / poster -->
-  <!-- <img class="media ratio-16-9" style="margin-top:22px;border-radius:12px" src="assets/annie-figure.jpg" alt="ANNIE GNN result figure"> -->
-  <figure class="media ratio-16-9 is-empty reveal" style="margin-top:22px;border-radius:12px">
-    <svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 4-4 5 5"/></svg>
-    <div class="ph-t">Add a result figure or poster (optional)</div>
-    <div class="ph-s">assets/annie-figure.jpg · 16:9</div>
-  </figure>
+  <!-- CERTIFICATIONS
+       Cards with data-src open that certificate in a popup viewer on click.
+       Cards without one are plain (no file yet) — add assets/<file>.pdf
+       and add data-src="assets/<file>.pdf" to make it clickable. -->
+  <div class="certs-grid reveal" style="margin-top:22px">
+    <button type="button" class="cert-card is-link" data-src="assets/certificate-nvidia.pdf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+      <div class="cc-title">Fundamentals of Deep Learning</div>
+      <div class="cc-org">NVIDIA</div>
+    </button>
+    <button type="button" class="cert-card is-link" data-src="assets/HAFA.pdf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+      <div class="cc-title">Unmanned Aerial Systems Module</div>
+      <div class="cc-org">Hellenic Air Force</div>
+    </button>
+    <button type="button" class="cert-card is-link" data-src="assets/AISummerSchool.pdf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+      <div class="cc-title">HIAS AI Summer School</div>
+      <div class="cc-org">NCSR Demokritos</div>
+    </button>
+    <button type="button" class="cert-card is-link" data-src="assets/UniversalAICourse.pdf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+      <div class="cc-title">Universal AI Course</div>
+      <div class="cc-org">NCSR Demokritos</div>
+    </button>
+  </div>
 </section>
+
+<!-- CERTIFICATE VIEWER MODAL -->
+<div class="cert-modal" id="certModal" aria-hidden="true">
+  <div class="cert-modal-backdrop" data-close></div>
+  <div class="cert-modal-body">
+    <button type="button" class="cert-modal-close" data-close aria-label="Close">&times;</button>
+    <iframe id="certModalFrame" title="Certificate preview"></iframe>
+  </div>
+</div>
 
 <!-- ============ PROJECTS ============ -->
 <section id="projects" class="wrap">
@@ -577,6 +635,28 @@
     btn.setAttribute('aria-expanded',open);
   });
   menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>menu.classList.remove('open')));
+
+  /* certificate viewer modal */
+  (function(){
+    const modal=document.getElementById('certModal');
+    const frame=document.getElementById('certModalFrame');
+    if(!modal||!frame) return;
+    function open(src){
+      frame.src=src;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+    }
+    function close(){
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+      frame.src='';
+    }
+    document.querySelectorAll('.cert-card.is-link[data-src]').forEach(card=>{
+      card.addEventListener('click',()=>open(card.dataset.src));
+    });
+    modal.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',close));
+    document.addEventListener('keydown',e=>{if(e.key==='Escape') close();});
+  })();
 
   /* scroll reveal */
   const io=new IntersectionObserver((es)=>{
