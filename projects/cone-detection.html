@@ -16,7 +16,7 @@
 <header class="nav">
   <div class="wrap nav-inner">
     <a class="brand" href="../index.html#top"><span class="dot"></span>manos.giannakis</a>
-    <a class="back-link" href="../index.html#projects">&larr; All projects</a>
+    <a class="back-link" href="../index.html#projects">&larr; All Projects</a>
   </div>
 </header>
 
@@ -126,6 +126,11 @@
     </div>
 
     <p>A naive approach , only keeping LiDAR points that land inside a cone's predicted keypoint mask , throws away valid points whenever the calibration is slightly off, which happens constantly with vibration on a moving car. I added a filtering step that's tolerant of that error instead of discarding everything outside a hard mask boundary, then chose between the camera-only PnP distance estimate and the LiDAR estimate per cone based on which was more reliable at that range.</p>
+
+    <figure class="figure dark" style="max-width:640px;margin:24px auto">
+      <img class="zoomable" src="../assets/projects/cone-detection/lidar-estimate-sync.gif" alt="Side by side: moving car with calibrated LiDAR points on the image plane, and the simulator's bird's-eye estimate selection between the PnP (blue triangle) and LiDAR (magenta circle) estimates" style="width:100%;display:block;border-radius:8px">
+      <figcaption class="figure-cap">On-car view and simulator estimate selection, same run. <br> <span style="color:#006eff">blue</span>: PnP Estimate, <span style="color:#f700ff">magenta</span>: LiDAR</figcaption>
+    </figure>
 
     <h2>Getting it to run without a GPU</h2>
     <p>On top of the architecture change itself, switching the inference runtime to <strong>OpenVINO</strong> instead of raw PyTorch made the real-time budget work on the car's Intel integrated graphics, more than halving inference time on its own.</p>
