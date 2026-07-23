@@ -246,6 +246,7 @@
   .proj{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg-2);
     display:flex;flex-direction:column;transition:.25s}
   .proj:hover{border-color:#33404f;transform:translateY(-2px)}
+  a.proj{cursor:pointer}
   .proj .body{padding:22px 22px 24px}
   .proj .ksmall{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
   .proj h3{font-family:var(--display);font-weight:600;font-size:20px;margin:9px 0 8px;letter-spacing:-.01em}
@@ -308,6 +309,15 @@
     letter-spacing:-.02em;margin:0 0 16px;line-height:1.02}
   .contact p{color:var(--muted);max-width:48ch;margin:0 auto 30px}
   .contact-links{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+  .icon-btn{
+    width:48px;height:48px;padding:0;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);background:var(--bg-2);transition:.2s;
+  }
+  .icon-btn svg{width:20px;height:20px}
+  .icon-btn:hover{border-color:var(--muted);background:var(--bg-3);transform:translateY(-2px)}
+  .icon-btn.icon-btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .icon-btn.icon-btn-primary:hover{background:#ffc75a}
 
   footer.foot{padding:48px 0 60px;border-top:1px solid var(--line-soft);margin-top:clamp(70px,10vw,120px)}
   .foot-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;
@@ -529,7 +539,7 @@
   <div class="proj-grid">
 
     <!-- PROJECT 1 -->
-    <article class="proj reveal">
+    <a class="proj reveal" href="projects/cone-detection.html">
       <!-- <img class="media ratio-16-9" src="assets/proj-perception.jpg" alt="Perception pipeline"> -->
       <figure class="media ratio-16-9 is-empty">
         <div class="ph-t">Project image / clip</div>
@@ -541,10 +551,10 @@
         <p>YOLO-Pose unifying detection and pose estimation for Formula Student, with custom augmented datasets and knowledge distillation for real-time inference.</p>
         <div class="chips"><span class="chip">YOLO-Pose</span><span class="chip">PyTorch</span><span class="chip">ROS2</span></div>
       </div>
-    </article>
+    </a>
 
     <!-- PROJECT 2 -->
-    <article class="proj reveal">
+    <a class="proj reveal" href="projects/sentiment-analysis.html">
       <!-- <img class="media ratio-16-9" src="assets/proj-sentiment.jpg" alt="Sentiment analysis"> -->
       <figure class="media ratio-16-9 is-empty">
         <div class="ph-t">Project image / clip</div>
@@ -556,10 +566,10 @@
         <p>An NLP pipeline combining classic techniques and ML models, tuned for accuracy and computational efficiency for scalable deployment.</p>
         <div class="chips"><span class="chip">NLP</span><span class="chip">Python</span><span class="chip">scikit-learn</span></div>
       </div>
-    </article>
+    </a>
 
     <!-- PROJECT 3 -->
-    <article class="proj reveal">
+    <a class="proj reveal" href="projects/multi-agent-system.html">
       <!-- <img class="media ratio-16-9" src="assets/proj-multiagent.jpg" alt="Multi-agent system"> -->
       <figure class="media ratio-16-9 is-empty">
         <div class="ph-t">Project image / clip</div>
@@ -571,9 +581,11 @@
         <p>A collaborative multi-agent system with dynamic task allocation, negotiation protocols, and performance evaluation.</p>
         <div class="chips"><span class="chip">Multi-agent</span><span class="chip">Java</span><span class="chip">Negotiation</span></div>
       </div>
-    </article>
+    </a>
 
-    <!-- PROJECT 4 — template you can duplicate for new work -->
+    <!-- PROJECT 4 — template you can duplicate for new work.
+         To add a real project: copy projects/cone-detection.html as a starting point for the
+         detail page, then change this <article> to <a class="proj reveal" href="projects/your-file.html">. -->
     <article class="proj reveal">
       <!-- <img class="media ratio-16-9" src="assets/proj-4.jpg" alt=""> -->
       <figure class="media ratio-16-9 is-empty">
@@ -622,13 +634,6 @@
       </div>
     </div>
   </div>
-
-  <div class="certs reveal">
-    <div class="cert"><span>›</span> Fundamentals of Deep Learning — NVIDIA</div>
-    <div class="cert"><span>›</span> Unmanned Aerial Systems Module — Hellenic Air Force</div>
-    <div class="cert"><span>›</span> HIAS AI Summer School — NCSR Demokritos</div>
-    <div class="cert"><span>›</span> Universal AI Course — NCSR Demokritos</div>
-  </div>
 </section>
 
 <!-- ============ CONTACT ============ -->
@@ -638,10 +643,16 @@
     <h2 style="margin-top:16px">Let's build something.</h2>
     <p>Open to robotics and ML work, research collaborations, and interesting problems. The fastest way to reach me is email.</p>
     <div class="contact-links">
-      <a class="btn btn-primary" href="mailto:manosgiannakis15@gmail.com">manosgiannakis15@gmail.com</a>
-      <a class="btn btn-ghost" href="https://github.com/manosgiann15" target="_blank" rel="noopener">GitHub <span class="arrow">↗</span></a>
-      <!-- Add your LinkedIn: paste your profile URL below and uncomment -->
-      <!-- <a class="btn btn-ghost" href="https://www.linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener">LinkedIn <span class="arrow">↗</span></a> -->
+      <a class="icon-btn icon-btn-primary" href="mailto:manosgiannakis15@gmail.com" aria-label="Email me" title="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18v14H3z"/><path d="M3 6l9 7 9-7"/></svg>
+      </a>
+      <a class="icon-btn" href="https://github.com/manosgiann15" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      </a>
+      <!-- Add your LinkedIn: paste your profile URL below -->
+      <a class="icon-btn" href="https://www.linkedin.com/in/manos-giannakis-89682027a" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
     </div>
   </div>
 </section>

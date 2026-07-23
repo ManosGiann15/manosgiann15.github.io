@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sentiment analysis system — Manos Giannakis</title>
+<meta name="description" content="An NLP pipeline combining classic techniques and ML models, tuned for accuracy and computational efficiency for scalable deployment." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/project.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html#top"><span class="dot"></span>manos.giannakis</a>
+    <a class="back-link" href="../index.html#projects">&larr; All projects</a>
+  </div>
+</header>
+
+<section class="proj-hero wrap">
+  <div class="ksmall reveal">NLP · Machine learning</div>
+  <h1 class="reveal">Sentiment analysis system</h1>
+  <div class="dates reveal">University of Piraeus</div>
+  <p class="lede reveal">An NLP pipeline combining classic text-processing techniques with ML models, tuned for accuracy and computational efficiency so it could run at scale rather than as a one-off notebook exercise.</p>
+  <div class="chips reveal">
+    <span class="chip">NLP</span><span class="chip">Python</span><span class="chip">scikit-learn</span>
+  </div>
+  <div class="cta-row reveal">
+    <!-- Point this at the real repo once you have it -->
+    <a class="btn btn-ghost" href="https://github.com/manosgiann15" target="_blank" rel="noopener">Code <span class="arrow">↗</span></a>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="proj-body reveal">
+    <h2>The problem</h2>
+    <p>Describe the dataset and task here — what text you were classifying, and why accuracy alone wasn't the whole story (e.g. needing something fast enough to run on large volumes of text).</p>
+
+    <h2>What I built</h2>
+    <ul>
+      <li><strong>Preprocessing pipeline</strong> — tokenization, normalization, and feature extraction (TF-IDF / embeddings — fill in which one you used).</li>
+      <li><strong>Model comparison</strong> across classic ML approaches (e.g. logistic regression, SVM, naive Bayes) to find the best accuracy/latency trade-off.</li>
+      <li><strong>Tuning</strong> for computational efficiency so the system could scale beyond a single-batch evaluation.</li>
+    </ul>
+
+    <h2>Result</h2>
+    <p>Fill in the final metric (accuracy / F1) and anything notable about the deployment or evaluation setup.</p>
+
+    <!-- GALLERY — replace with real screenshots (confusion matrix, results table, demo UI, etc.) -->
+    <div class="gallery">
+      <figure class="media ratio-4-3 is-empty"><div class="ph-t">Results / metrics</div><div class="ph-s">assets/proj2-1.jpg</div></figure>
+      <figure class="media ratio-4-3 is-empty"><div class="ph-t">Pipeline diagram</div><div class="ph-s">assets/proj2-2.jpg</div></figure>
+      <figure class="media ratio-4-3 is-empty"><div class="ph-t">Demo / output</div><div class="ph-s">assets/proj2-3.jpg</div></figure>
+    </div>
+  </div>
+
+  <a class="next-proj reveal" href="multi-agent-system.html">
+    <div>
+      <div class="k">Next project</div>
+      <h3>Negotiating multi-agent system</h3>
+    </div>
+    <span class="arrow">→</span>
+  </a>
+</section>
+
+<div class="photo-lightbox" id="photoLightbox" aria-hidden="true">
+  <div class="photo-lightbox-backdrop" data-photo-close></div>
+  <button type="button" class="photo-lightbox-close" data-photo-close aria-label="Close">&times;</button>
+  <img id="photoLightboxImg" src="" alt="">
+</div>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© 2026 Manos Giannakis</span>
+    <span>Athens, GR · Robotics · ML · Autonomy</span>
+  </div>
+</footer>
+
+<script src="../assets/js/project.js"></script>
+</body>
+</html>

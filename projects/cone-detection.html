@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cone detection &amp; pose estimation — Manos Giannakis</title>
+<meta name="description" content="Real-time cone perception for a Formula Student Driverless car: color, position and distance from a single multi-task model, built for a no-GPU, ~€500 hardware budget." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/project.css" />
+<style>:root{--maxw:1040px}</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html#top"><span class="dot"></span>manos.giannakis</a>
+    <a class="back-link" href="../index.html#projects">&larr; All projects</a>
+  </div>
+</header>
+
+<section class="proj-hero wrap">
+  <div class="ksmall reveal">Autonomous perception · Prom Racing FSAE</div>
+  <h1 class="reveal">Cone detection &amp; pose estimation</h1>
+  <div class="dates reveal">Head of Autonomous System · 2024 , 2025</div>
+  <p class="lede reveal">The perception system that finds every cone around a driverless race car, reads its color, and estimates its distance , rebuilt as a single multi-task model after the old two-stage pipeline couldn't keep up at range, on a budget of about <strong>&euro;500</strong> and with <strong>no discrete GPU</strong> to spare.</p>
+  <div class="chips reveal">
+    <span class="chip">YOLO11n-Pose</span><span class="chip">PyTorch</span><span class="chip">OpenVINO</span>
+    <span class="chip">ROS2</span><span class="chip">Camera–LiDAR fusion</span>
+  </div>
+  <div class="stat-row reveal">
+    <div class="stat"><div class="num">€500</div><div class="lbl">Hardware budget</div></div>
+    <div class="stat"><div class="num">2.90M</div><div class="lbl">Params (vs 4.61M legacy)</div></div>
+    <div class="stat"><div class="num">29ms</div><div class="lbl">Inference (vs 59ms legacy)</div></div>
+    <div class="stat"><div class="num">99.5%</div><div class="lbl">Detection rate, 10&ndash;15m</div></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="proj-body reveal">
+
+    <h2>The Problem</h2>
+    <p>The autonomous system needs to find every track-boundary cone in view, tell what color it is, and estimate how far away it is , every frame, in real time, so the planning stack can trust it at racing speed. That's the whole perception job for a driverless car.</p>
+    <p>What made it hard wasn't the model, it was the box it had to run in. There was <strong>no discrete GPU</strong>: one drains the battery too fast over a race, and it physically didn't fit in the enclosure the driverless PC lives in, on the car. Everything had to run on the CPU/iGPU of a small embedded box. And the whole perception stack , sensors included , had to fit inside a <strong>roughly &euro;500 budget</strong>, which ruled out expensive sensing hardware and pushed the problem back onto software.</p>
+
+    <div class="figure-row">
+      <figure class="figure dark">
+        <img class="zoomable" src="../assets/projects/cone-detection/onboard-detection.png" alt="On-car detection output: cones boxed and pose-keypointed from both cameras">
+        <figcaption class="figure-cap">Live output from the car: bounding box + pose keypoints per cone, both cameras</figcaption>
+      </figure>
+      <figure class="figure dark">
+        <img class="zoomable" src="../assets/projects/cone-detection/birdseye-cones.png" alt="Bird's-eye view of fused cone position estimates">
+        <figcaption class="figure-cap">Fused cone positions (camera + LiDAR), bird's-eye view</figcaption>
+      </figure>
+    </div>
+
+    <h2>The Legacy System</h2>
+    <p>The pipeline I inherited was a <strong>decoupled, two-stage design</strong>: a YOLOv5n detector found cones, then cropped patches were handed to a separate ResNet-based keypoint CNN to estimate pose for the perspective-n-point distance calculation.</p>
+
+    <figure class="figure light">
+      <img class="zoomable" src="../assets/projects/cone-detection/legacy-pipeline.png" alt="Legacy two-stage pipeline: Image to YOLOv5n to Keypoint CNN to Perspective-n-Point">
+      <figcaption class="figure-cap">Legacy pipeline , detection and pose estimation as two separate networks</figcaption>
+    </figure>
+
+    <ul>
+      <li><strong>Redundant learning</strong> , the keypoint CNN never saw the detector's features. It had to re-learn cone shape, edges, and color entirely on its own from cropped patches, instead of reusing what the detector already knew.</li>
+      <li><strong>Two forward passes</strong> per cone, which is exactly the kind of cost you can't afford without a GPU.</li>
+      <li><strong>Accuracy fell off a cliff at range</strong> , solid up close, but detection rate dropped to under half past 15m, which matters a lot at racing speed.</li>
+    </ul>
+
+    <figure class="figure light">
+      <img class="zoomable" src="../assets/projects/cone-detection/legacy-detection-rate.png" alt="Legacy detection rate vs distance: 84.7% at 0-5m falling to 33.3% at 20-25m">
+      <figcaption class="figure-cap">Legacy detection rate by distance , 84.7% up close, 33.3% by 20&ndash;25m</figcaption>
+    </figure>
+
+    <h2>What I built</h2>
+    <p>I replaced both stages with a single <strong>YOLO11n-Pose</strong> model that detects cones and predicts their keypoints in one forward pass, sharing one backbone instead of learning the same features twice.</p>
+
+    <figure class="figure light" style="max-width:420px;margin-left:auto;margin-right:auto">
+      <img class="zoomable" src="../assets/projects/cone-detection/multitask-architecture.png" alt="Multi-task architecture: CSP backbone, PAN neck, separate detect and pose heads">
+      <figcaption class="figure-cap">Shared backbone + neck, with detect and pose heads trained end-to-end</figcaption>
+    </figure>
+
+    <figure class="figure light">
+      <img class="zoomable" src="../assets/projects/cone-detection/new-pipeline.png" alt="New pipeline: image and point cloud fused through YOLO-Pose, PnP, projection, point filtering, and estimate selection">
+      <figcaption class="figure-cap">New pipeline , single-pass detection fused with LiDAR for distance</figcaption>
+    </figure>
+
+    <p>The keypoint head now reuses the rich features the shared backbone already learned for detection, and training all tasks together (instead of two separate training runs) improved both training efficiency and final accuracy.</p>
+
+    <table class="rtable">
+      <thead><tr><th>Model</th><th>Pose mAP@.75</th></tr></thead>
+      <tbody>
+        <tr><td>Baseline (no pretraining)</td><td class="hl">84.1%</td></tr>
+        <tr><td>COCO pretrained</td><td class="hl">90.8%</td></tr>
+        <tr><td>FSOCO pretrained</td><td class="hl">92.7%</td></tr>
+      </tbody>
+    </table>
+
+    <p>Our own labeled dataset , with the box, class, <em>and</em> keypoints needed for pose , was small: about 4,200 cone instances, next to the 189,000 in the public FSOCO dataset (which only has boxes and classes, no keypoints). Pretraining on FSOCO's detection task first, then fine-tuning pose on our own labels, converged to a lower validation loss than starting from COCO weights or from scratch.</p>
+
+    <div class="figure-row">
+      <figure class="figure light" style="display:flex;flex-direction:column;align-items:center">
+        <img class="zoomable" src="../assets/projects/cone-detection/dataset-size.png" alt="Dataset size comparison: internal dataset 4,207 cone instances vs FSOCO 188,951" style="max-width:100%;max-height:230px;width:auto;height:auto;object-fit:contain">
+        <figcaption class="figure-cap">Internal keypoint dataset vs the public FSOCO detection dataset</figcaption>
+      </figure>
+      <figure class="figure dark" style="display:flex;flex-direction:column;align-items:center">
+        <img class="zoomable" src="../assets/projects/cone-detection/training-loss.png" alt="Validation pose loss curves comparing no pretraining, FSOCO pretraining, and COCO pretraining" style="max-width:100%;max-height:230px;width:auto;height:auto;object-fit:contain">
+        <figcaption class="figure-cap">Validation pose loss: FSOCO pretraining (red) converges lowest</figcaption>
+      </figure>
+    </div>
+
+    <h2>Sensor Fusion &amp; Calibration</h2>
+    <p>Distance comes from fusing the camera detections with a 16-layer LiDAR. The two sensors were calibrated together with a checkerboard pass so points from the cloud and pixels from the image plane agree.</p>
+
+    <div class="figure-row">
+      <figure class="figure light" style="display:flex;flex-direction:column;align-items:center">
+        <img class="zoomable" src="../assets/projects/cone-detection/calibration-pipeline.png" alt="Camera-LiDAR calibration pipeline: checkerboard feature extraction from both camera images and point clouds" style="max-width:100%;max-height:150px;width:auto;height:auto;object-fit:contain">
+        <figcaption class="figure-cap">Camera &ndash; LiDAR extrinsic calibration</figcaption>
+      </figure>
+      <figure class="figure light" style="display:flex;flex-direction:column;align-items:center">
+        <img class="zoomable" src="../assets/projects/cone-detection/camera-mount-cad.png" alt="CAD rendering of the stereo camera mount on the car's roll hoop" style="max-width:100%;max-height:150px;width:auto;height:auto;object-fit:contain">
+        <figcaption class="figure-cap">Camera mount design on the roll hoop (CAD)</figcaption>
+      </figure>
+    </div>
+
+    <p>A naive approach , only keeping LiDAR points that land inside a cone's predicted keypoint mask , throws away valid points whenever the calibration is slightly off, which happens constantly with vibration on a moving car. I added a filtering step that's tolerant of that error instead of discarding everything outside a hard mask boundary, then chose between the camera-only PnP distance estimate and the LiDAR estimate per cone based on which was more reliable at that range.</p>
+
+    <h2>Getting it to run without a GPU</h2>
+    <p>On top of the architecture change itself, switching the inference runtime to <strong>OpenVINO</strong> instead of raw PyTorch made the real-time budget work on the car's Intel integrated graphics, more than halving inference time on its own.</p>
+
+    <div class="figure-row">
+      <figure class="figure light">
+        <img class="zoomable" src="../assets/projects/cone-detection/inference-time.png" alt="Inference time comparison: 59ms for legacy pipeline vs 41ms for new YOLO11n-Pose">
+        <figcaption class="figure-cap">Per-frame inference: legacy two-stage pipeline vs the new model</figcaption>
+      </figure>
+      <figure class="figure light">
+        <img class="zoomable" src="../assets/projects/cone-detection/openvino-inference.png" alt="Mean inference time: 62.1ms with PyTorch vs 29.3ms with OpenVINO on the same iGPU">
+        <figcaption class="figure-cap">Same model, same iGPU: PyTorch vs OpenVINO runtime</figcaption>
+      </figure>
+    </div>
+
+    <h2>Results</h2>
+    <p>Against the legacy system on held-out track footage, the new pipeline is smaller, faster, and , the part that actually mattered on track , stays accurate at the distances where the car needs the most warning.</p>
+
+    <div class="figure-row">
+      <figure class="figure light">
+        <img class="zoomable" src="../assets/projects/cone-detection/legacy-detection-rate.png" alt="Legacy detection rate vs distance, dropping to 33.3% at 20-25m">
+        <figcaption class="figure-cap">Legacy: 84.7% → 33.3% as distance increases</figcaption>
+      </figure>
+      <figure class="figure light">
+        <img class="zoomable" src="../assets/projects/cone-detection/new-detection-rate.png" alt="New model detection rate vs distance, staying between 93.6% and 99.5% across all bins">
+        <figcaption class="figure-cap">New model: 93.6&ndash;99.5% across every distance bin</figcaption>
+      </figure>
+    </div>
+
+    <div class="figure-row">
+      <figure class="figure light" style="display:flex;flex-direction:column;align-items:center">
+        <img class="zoomable" src="../assets/projects/cone-detection/confusion-matrix.png" alt="Confusion matrix for cone color classification (blue, orange, yellow, large orange) across 0-20m" style="max-width:100%;max-height:280px;width:auto;height:auto;object-fit:contain">
+        <figcaption class="figure-cap">Color classification confusion matrix, 0&ndash;20m</figcaption>
+      </figure>
+      <figure class="figure light" style="display:flex;flex-direction:column;align-items:center">
+        <img class="zoomable" src="../assets/projects/cone-detection/param-comparison.png" alt="Model parameter comparison: 4.61M for legacy pipeline vs 2.90M for the new model" style="max-width:100%;max-height:280px;width:auto;height:auto;object-fit:contain">
+        <figcaption class="figure-cap">37% fewer parameters than the legacy pipeline</figcaption>
+      </figure>
+    </div>
+
+    <figure class="figure dark" style="max-width:640px;margin:24px auto">
+      <video style="width:100%;display:block;border-radius:8px" controls preload="metadata">
+        <source src="../assets/projects/cone-detection/sim-video.mp4" type="video/mp4">
+      </video>
+      <figcaption class="figure-cap">Autonomous laps in the team's simulator</figcaption>
+    </figure>
+    
+    <p>The system ran on-car through the season, feeding directly into the SLAM stack for autonomous laps. The codebase is unavailable, since it's still running on the car this season.</p>
+  </div>
+
+  <a class="next-proj reveal" href="sentiment-analysis.html">
+    <div>
+      <div class="k">Next project</div>
+      <h3>Sentiment Analysis System</h3>
+    </div>
+    <span class="arrow">→</span>
+  </a>
+</section>
+
+<div class="photo-lightbox" id="photoLightbox" aria-hidden="true">
+  <div class="photo-lightbox-backdrop" data-photo-close></div>
+  <button type="button" class="photo-lightbox-close" data-photo-close aria-label="Close">&times;</button>
+  <img id="photoLightboxImg" src="" alt="">
+</div>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© 2026 Manos Giannakis</span>
+    <span>Athens, GR · Robotics · ML · Autonomy</span>
+  </div>
+</footer>
+
+<script src="../assets/js/project.js"></script>
+</body>
+</html>
