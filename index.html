@@ -281,12 +281,25 @@
   .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
   @media(max-width:720px){.gallery{grid-template-columns:1fr 1fr}}
 
-  .media-row{display:flex;gap:24px;margin-top:24px;align-items:flex-start}
-  .media-row .media.ratio-9-16{width:min(240px,40%);flex:none;border-radius:12px}
-  .media-row .gallery{flex:1;margin-top:0;align-self:stretch;grid-template-columns:1fr 1fr}
+  .media-row{
+    display:flex;gap:24px;margin-top:24px;align-items:flex-start;
+    --vid-w:min(240px,40vw);
+    --vid-h:calc(var(--vid-w) * 16 / 9);
+    --gal-gap:14px;
+    --row-h:calc((var(--vid-h) - var(--gal-gap)) / 2);
+    --col-w:calc(var(--row-h) * 4 / 3);
+  }
+  .media-row .media.ratio-9-16{width:var(--vid-w);flex:none;border-radius:12px}
+  .media-row .gallery{
+    flex:none;margin-top:0;display:grid;grid-template-columns:repeat(2,var(--col-w));
+    grid-template-rows:repeat(2,var(--row-h));gap:var(--gal-gap);
+  }
+  .media-row .gallery .media{height:100%;width:100%}
   @media(max-width:720px){
     .media-row{flex-direction:column}
     .media-row .media.ratio-9-16{width:min(260px,70%);margin:0 auto}
+    .media-row .gallery{grid-template-columns:1fr 1fr;grid-template-rows:auto auto;width:100%}
+    .media-row .gallery .media{height:auto;width:100%}
   }
 
   /* skills */
@@ -414,8 +427,8 @@
            =================================================================== -->
 
       <div class="media-row">
-        <video class="media ratio-9-16" controls preload="metadata">
-          <source src="assets/prom-run.mp4" type="video/mp4">
+        <video class="media ratio-9-16" controls preload="metadata" poster="assets/prom-run-poster.jpg">
+          <source src="assets/prom-run-web.mp4" type="video/mp4">
         </video>
 
         <!-- PHOTO GALLERY -->
@@ -533,18 +546,13 @@
   <div class="sec-head reveal">
     <div class="eyebrow">Selected projects</div>
     <h2>Things I've built</h2>
-    <p>Add a photo, GIF, or short clip to any card — the media slot sits at the top of each one.</p>
   </div>
 
   <div class="proj-grid">
 
     <!-- PROJECT 1 -->
     <a class="proj reveal" href="projects/cone-detection.html">
-      <!-- <img class="media ratio-16-9" src="assets/proj-perception.jpg" alt="Perception pipeline"> -->
-      <figure class="media ratio-16-9 is-empty">
-        <div class="ph-t">Project image / clip</div>
-        <div class="ph-s">assets/proj-perception.jpg</div>
-      </figure>
+      <img class="media ratio-16-9" style="object-fit:cover;object-position:center" src="assets/projects/cone-detection/lidar-estimate-sync.gif" alt="On-car LiDAR-camera detection next to the simulator's estimate selection">
       <div class="body">
         <div class="ksmall">Autonomous perception</div>
         <h3>Cone detection &amp; pose estimation</h3>
