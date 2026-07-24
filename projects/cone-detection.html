@@ -89,14 +89,16 @@
 
     <p>The keypoint head now reuses the rich features the shared backbone already learned for detection, and training all tasks together (instead of two separate training runs) improved both training efficiency and final accuracy.</p>
 
-    <table class="rtable">
-      <thead><tr><th>Model</th><th>Pose mAP@.75</th></tr></thead>
-      <tbody>
-        <tr><td>Baseline (no pretraining)</td><td class="hl">84.1%</td></tr>
-        <tr><td>COCO pretrained</td><td class="hl">90.8%</td></tr>
-        <tr><td>FSOCO pretrained</td><td class="hl">92.7%</td></tr>
-      </tbody>
-    </table>
+    <div class="rtable-wrap">
+      <table class="rtable">
+        <thead><tr><th>Model</th><th>Pose mAP@.75</th></tr></thead>
+        <tbody>
+          <tr><td>Baseline (no pretraining)</td><td class="hl">84.1%</td></tr>
+          <tr><td>COCO pretrained</td><td class="hl">90.8%</td></tr>
+          <tr><td>FSOCO pretrained</td><td class="hl">92.7%</td></tr>
+        </tbody>
+      </table>
+    </div>
 
     <p>Our own labeled dataset , with the box, class, <em>and</em> keypoints needed for pose , was small: about 4,200 cone instances, next to the 189,000 in the public FSOCO dataset (which only has boxes and classes, no keypoints). Pretraining on FSOCO's detection task first, then fine-tuning pose on our own labels, converged to a lower validation loss than starting from COCO weights or from scratch.</p>
 
@@ -172,8 +174,8 @@
     </div>
 
     <figure class="figure dark" style="max-width:640px;margin:24px auto">
-      <video style="width:100%;display:block;border-radius:8px" controls preload="metadata">
-        <source src="../assets/projects/cone-detection/sim-video.mp4" type="video/mp4">
+      <video style="width:100%;display:block;border-radius:8px" controls preload="metadata" poster="../assets/projects/cone-detection/sim-video-poster.jpg">
+        <source src="../assets/projects/cone-detection/sim-video-web.mp4" type="video/mp4">
       </video>
       <figcaption class="figure-cap">Autonomous laps in the team's simulator</figcaption>
     </figure>

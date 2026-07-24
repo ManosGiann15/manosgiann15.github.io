@@ -39,6 +39,7 @@
   }
 
   *{box-sizing:border-box}
+  figure{margin:0}
   html{scroll-behavior:smooth}
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
@@ -170,8 +171,8 @@
   .facts{border:1px solid var(--line);border-radius:14px;background:var(--bg-2);overflow:hidden}
   .fact{display:flex;justify-content:space-between;gap:16px;padding:15px 18px;border-bottom:1px solid var(--line-soft);font-size:14px}
   .fact:last-child{border-bottom:0}
-  .fact .k{font-family:var(--mono);color:var(--faint);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
-  .fact .v{color:var(--text);text-align:right}
+  .fact .k{font-family:var(--mono);color:var(--faint);font-size:12px;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
+  .fact .v{color:var(--text);text-align:right;min-width:0;overflow-wrap:break-word}
 
   /* work timeline */
   .job{
@@ -349,7 +350,7 @@
 <header class="nav">
   <div class="wrap nav-inner">
     <a class="brand" href="#top"><span class="dot"></span>manos.giannakis</a>
-    <button class="menu-btn" aria-expanded="false" aria-controls="menu">menu</button>
+    <button class="menu-btn" aria-expanded="false" aria-controls="menu">Menu</button>
     <nav class="links" id="menu">
       <a href="#about">About</a>
       <a href="#work">Work</a>
@@ -730,7 +731,7 @@
   /* scroll reveal */
   const io=new IntersectionObserver((es)=>{
     es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
-  },{threshold:.12});
+  },{threshold:0,rootMargin:'0px 0px -10% 0px'});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
   /* active nav link */
