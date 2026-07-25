@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/css/project.css" />
+<link rel="icon" href="../assets/favicon.ico" sizes="any" />
+<link rel="icon" href="../assets/favicon-32.png" type="image/png" sizes="32x32" />
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
 </head>
 <body>
 
@@ -43,10 +46,10 @@
   <div class="proj-body reveal">
 
     <h2>The problem</h2>
-    <p>Split a shared workload across independent agents that don't take orders from anyone: a set of garbage items, each worth a different reward, scattered across a grid, and a handful of agents that each have to figure out which item is worth going after. There's no central scheduler assigning tasks by fiat &mdash; agents need a way to agree on who takes what so they don't collide on the same target or leave items uncollected, and that allocation has to keep working as items are collected and new ones respawn, not just once at the start.</p>
+    <p>Split a shared workload across independent agents that don't take orders from anyone: a set of garbage items, each worth a different reward, scattered across a grid, and a handful of agents that each have to figure out which item is worth going after. There's no central scheduler assigning tasks by fiat, agents need a way to agree on who takes what so they don't collide on the same target or leave items uncollected, and that allocation has to keep working as items are collected and new ones respawn, not just once at the start.</p>
 
     <h2>The environment</h2>
-    <p>The simulation is implemented as a Jason <code>Environment</code> extending its <code>GridWorldModel</code>, on a <strong>10&times;10 grid</strong> with walls that block movement. Three agents (A, B, C, rendered red/cyan/magenta) share the space, and garbage items spawn at random cells with one of four reward values (0.2, 0.4, 0.6, 0.8). Collecting an item respawns it elsewhere at a fresh reward, so there's always a live task queue rather than a fixed list that runs out &mdash; and every move costs a small penalty (0.01 points), so idle wandering is never free.</p>
+    <p>The simulation is implemented as a Jason <code>Environment</code> extending its <code>GridWorldModel</code>, on a <strong>10&times;10 grid</strong> with walls that block movement. Three agents (A, B, C, rendered red/cyan/magenta) share the space, and garbage items spawn at random cells with one of four reward values (0.2, 0.4, 0.6, 0.8). Collecting an item respawns it elsewhere at a fresh reward, so there's always a live task queue rather than a fixed list that runs out and every move costs a small penalty (0.01 points), so idle wandering is never free.</p>
 
     <ul>
       <li><strong>Agents</strong> perceive the grid through Jason percepts (garbage locations and rewards) and act by issuing <code>next(slot)</code> movement actions, defined in AgentSpeak plans.</li>
@@ -54,16 +57,16 @@
     </ul>
 
     <h2>Task allocation: contract-net negotiation</h2>
-    <p>Instead of a fixed assignment, each garbage item is auctioned off: every agent's bid is its <strong>utility</strong> for that item &mdash; the item's reward minus the cost of the A* path to reach it &mdash; and the item goes to whichever agent values it most. That's a first pass over every open item. A second pass then guarantees no agent is left idle: any agent that didn't win an item in the first round is handed the nearest reachable one, even if it isn't the globally optimal pick, so task coverage never depends on the auction converging cleanly.</p>
+    <p>Instead of a fixed assignment, each garbage item is auctioned off: every agent's bid is its <strong>utility</strong> for that item, the item's reward minus the cost of the A* path to reach it and the item goes to whichever agent values it most. That's a first pass over every open item. A second pass then guarantees no agent is left idle: any agent that didn't win an item in the first round is handed the nearest reachable one, even if it isn't the globally optimal pick, so task coverage never depends on the auction converging cleanly.</p>
 
     <h2>Pathfinding: A*</h2>
     <p>Each bid's path cost, and each agent's actual route, comes from an <strong>A* search</strong> over the grid that respects walls and obstacles. Paths aren't computed once and forgotten: whenever an item is collected (its target disappears and a new one spawns) or an agent gets reassigned, every affected route is recalculated, so agents are always chasing a currently-valid target instead of a stale plan.</p>
 
     <h2>Conflict resolution</h2>
-    <p>When two agents' bids would clash over the same item, priority went to the agent with the greater income &mdash; a simple, cheap-to-compute tie-breaker, but one that risked letting early leaders keep winning and starving a lower-scoring agent of tasks. That risk is exactly what the results below test for.</p>
+    <p>When two agents' bids would clash over the same item, priority went to the agent with the greater income, a simple, cheap-to-compute tie-breaker, but one that risked letting early leaders keep winning and starving a lower-scoring agent of tasks. That risk is exactly what the results below test for.</p>
 
     <h2>Results</h2>
-    <p>A small 24-run pilot batch logged early on shows a real imbalance: Agent A and B pulled ahead while Agent C collected less than half as much on average &mdash; the fairness risk the income-priority rule invites. The fuller simulation log, <strong>1,301 runs</strong> committed alongside the code, tells a different story once the utility function is doing the weighing (reward minus path cost, not reward alone): all three agents converge to essentially the same average.</p>
+    <p>A small 24-run pilot batch logged early on shows a real imbalance: Agent A and B pulled ahead while Agent C collected less than half as much on average, the fairness risk the income-priority rule invites. The fuller simulation log, <strong>1,301 runs</strong> committed alongside the code, tells a different story once the utility function is doing the weighing (reward minus path cost, not reward alone): all three agents converge to essentially the same average.</p>
 
     <div class="rtable-wrap">
       <table class="rtable rtable-stack">
@@ -77,7 +80,7 @@
 
     <figure class="figure light">
       <img class="zoomable" src="../assets/projects/multi-agent-system/agent-points-mean.png" alt="Bar chart of mean points collected per agent across 1,301 simulation runs, showing Agent A, B, and C at roughly 2.6 points each with overlapping error bars">
-      <figcaption class="figure-cap">Mean points per agent, 1,301 runs &mdash; error bars are &plusmn;1 std. dev.</figcaption>
+      <figcaption class="figure-cap">Mean points per agent, 1,301 runs, error bars are &plusmn;1 std. dev.</figcaption>
     </figure>
 
     <figure class="figure light">

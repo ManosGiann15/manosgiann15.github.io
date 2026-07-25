@@ -1,36 +1,28 @@
 # manosgiann15.github.io
 
-Personal portfolio site built with [Jekyll](https://jekyllrb.com/) and hosted on GitHub Pages.
+Personal portfolio site, hosted on GitHub Pages.
+
+## How it's built
+
+Plain static HTML/CSS/JS — no build step, no framework, no templating.
+
+- `index.html` — the whole homepage (hero, about, experience, research, projects, skills, contact). Content is written directly in the HTML; there's no CMS or data file to edit.
+- `projects/*.html` — one detail page per project, sharing `assets/css/project.css` and `assets/js/project.js`.
+- `assets/` — images, video, PDFs (CV, thesis preview, certificates), and per-project asset folders under `assets/projects/<name>/`.
+
+`_config.yml` and `Gemfile` exist only so GitHub Pages' Jekyll build picks up the `jekyll-sitemap` plugin and generates `sitemap.xml` automatically at deploy time — nothing on the site uses Jekyll layouts, includes, or data files.
 
 ## Editing content
 
-All real content lives in `_data/*.yml` — you don't need to touch HTML to update the site:
+Just edit the HTML directly:
 
-- `_data/experience.yml` — work experience cards
-- `_data/education.yml` — education entries
-- `_data/publications.yml` — publications grouped by venue
-- `_data/projects.yml` — project cards
-- `_data/skills.yml` — grouped skill chips
-
-Site-wide info (name, tagline, description, email, social links) is in `_config.yml`.
-
-The "About" bio paragraph is written directly in `index.html` under the `#about` section.
-
-## Running locally
-
-Requires [Ruby](https://www.ruby-lang.org/) and Bundler.
-
-```
-bundle install
-bundle exec jekyll serve
-```
-
-Then open http://localhost:4000.
+- Homepage sections (hero copy, experience, research, skills, contact) — edit `index.html`.
+- A project's write-up — edit its file in `projects/`.
+- Add a new project — copy an existing `projects/*.html` as a starting point, add its assets under `assets/projects/<name>/`, and add a card for it in the `.proj-grid` section of `index.html`.
 
 ## Deploying
 
-This repo is a `<username>.github.io` repo, so GitHub Pages serves it automatically from the
-`main` branch on every push — no build step to configure. Just:
+This is a `<username>.github.io` repo, so GitHub Pages serves it automatically from the `main` branch on every push — no build step to trigger manually.
 
 ```
 git add -A

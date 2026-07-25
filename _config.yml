@@ -1,22 +1,12 @@
+# The site itself is plain static HTML (index.html, projects/*.html) with no
+# Jekyll templating -- this file only exists so GitHub Pages' Jekyll build
+# picks up jekyll-sitemap and generates sitemap.xml automatically.
 title: Manos Giannakis
-tagline: Robotics Engineer
 description: >-
-  Machine learning engineer. Led autonomous systems at Prom Racing and worked on GNNs for the ANNIE experiment.
+  Robotics and machine-learning engineer. Autonomous perception for Formula Student Driverless, and graph neural networks for neutrino event reconstruction.
 url: "https://manosgiann15.github.io"
-author: Manos Giannakis
-email: manosgiannakis15@gmail.com
 
-# Social / contact links shown in the footer and hero.
-# Leave a value blank ("") to hide that icon.
-social:
-  github: manosgiann15
-  linkedin: ""
-  scholar: ""
-  twitter: ""
-
-markdown: kramdown
 plugins:
-  - jekyll-seo-tag
   - jekyll-sitemap
 
 exclude:
