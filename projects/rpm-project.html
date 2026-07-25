@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RPM project — Manos Giannakis</title>
+<meta name="description" content="A FastAPI + PostgreSQL + Celery backend for ingesting patient vitals, scanning them for SpO2 danger signals, and surfacing alerts through an API and minimal UI, containerized with Docker Compose." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/project.css" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html#top"><span class="dot"></span>manos.giannakis</a>
+    <a class="back-link" href="../index.html#projects">&larr; All Projects</a>
+  </div>
+</header>
+
+<section class="proj-hero wrap">
+  <div class="ksmall reveal">Backend systems</div>
+  <h1 class="reveal">RPM Project</h1>
+  <div class="dates reveal">Personal project · Ongoing</div>
+  <p class="lede reveal">A remote patient monitoring backend: a <strong>FastAPI</strong> service ingests vital-sign readings, a <strong>Celery</strong> worker scans them for SpO2 danger signals, and the resulting alerts surface through an API and a small polling UI &mdash; all wired together with <strong>PostgreSQL</strong>, <strong>Redis</strong>, and <strong>Docker Compose</strong>.</p>
+  <div class="chips reveal">
+    <span class="chip">FastAPI</span><span class="chip">PostgreSQL</span><span class="chip">Celery</span><span class="chip">Redis</span><span class="chip">Docker Compose</span>
+  </div>
+  <div class="stat-row reveal">
+    <div class="stat"><div class="num">5</div><div class="lbl">API endpoints</div></div>
+    <div class="stat"><div class="num">7</div><div class="lbl">Services in the compose stack</div></div>
+    <div class="stat"><div class="num">50</div><div class="lbl">Patients in the demo seed</div></div>
+    <div class="stat"><div class="num">&ge;8pt</div><div class="lbl">SpO2 drop alert threshold</div></div>
+  </div>
+  <div class="cta-row reveal">
+    <a class="btn btn-primary" href="https://github.com/ManosGiann15/rpm-project" target="_blank" rel="noopener">Code <span class="arrow">↗</span></a>
+    <a class="btn btn-ghost" href="https://github.com/ManosGiann15/rpm-project/blob/main/RoadMap.md" target="_blank" rel="noopener">Roadmap <span class="arrow">↗</span></a>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="proj-body reveal">
+
+    <h2>The problem</h2>
+    <p>A remote patient monitoring pipeline has three jobs that don't fit in one place: taking in a steady stream of vitals from devices, deciding which readings actually matter, and getting that decision in front of a clinician without drowning them in raw numbers. That's an ingestion API, a background process that can watch trends instead of just single readings, and a way to review and clear what it flags &mdash; each with a different failure mode if it's missing.</p>
+
+    <h2>What I built</h2>
+    <ul>
+      <li><strong>Ingestion API</strong> &mdash; a token-authenticated <code>POST /v1/webhook/vitals</code> endpoint with range validation (heart rate 20&ndash;250, SpO2 50&ndash;100) and a bounded timestamp window, so malformed or stale readings never reach the database.</li>
+      <li><strong>Alert scanning</strong> &mdash; a Celery worker (<code>app/worker.py</code>) walks a patient's recent vitals and inserts an alert when SpO2 drops 8+ points between consecutive readings, or falls under 90 outright, decoupled from the request path so ingestion never blocks on it.</li>
+      <li><strong>Alerts API &amp; UI</strong> &mdash; <code>GET /v1/alerts</code> and an idempotent <code>POST /v1/alerts/{id}/ack</code>, plus a small polling UI to review and clear alerts without touching the API directly.</li>
+      <li><strong>Demo data tooling</strong> &mdash; <code>scripts/seed_patients.py</code> seeds 50 patients with vitals and a realistic spread of alerts, and <code>scripts/generate_stream.py</code> emits an NDJSON vitals stream with an injected SpO2 desaturation event for replaying against the webhook.</li>
+    </ul>
+
+    <h2>Architecture</h2>
+    <pre style="background:var(--bg-3);border:1px solid var(--line);border-radius:12px;padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--muted)"><code>        seed / stream scripts
+                │
+                ▼
+   ┌──────────────────────┐        ┌──────────────┐
+   │  FastAPI  (app/main)  │◄──────►│  PostgreSQL   │
+   │  webhook · alerts API │        │  (pgvector)   │
+   │  static UI            │        └──────────────┘
+   └──────────┬────────────┘
+              │ enqueue
+              ▼
+   ┌──────────────────────┐        ┌──────────────┐
+   │  Celery worker         │◄──────►│    Redis      │
+   │  (app/worker.py)       │        │ broker/backend│
+   │  scan_for_alerts       │        └──────────────┘
+   └──────────────────────┘</code></pre>
+    <p><code>docker-compose.yml</code> also wires up an OpenTelemetry collector, Prometheus, and Grafana as groundwork for the observability step on the roadmap &mdash; the API doesn't export a <code>/metrics</code> endpoint yet, so those are provisioned but not doing anything useful today. Same story for the <code>pgvector</code>-enabled Postgres image: the extension is available, but the guideline-grounded alert explanations it's meant to support aren't built yet.</p>
+
+    <h2>API reference</h2>
+    <div class="rtable-wrap">
+      <table class="rtable rtable-stack">
+        <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td data-th="Method">GET</td><td data-th="Path"><code>/health</code></td><td data-th="Auth">&mdash;</td><td data-th="Description">DB connectivity check</td></tr>
+          <tr><td data-th="Method">POST</td><td data-th="Path"><code>/v1/webhook/vitals</code></td><td data-th="Auth">Bearer</td><td data-th="Description">Ingest one vitals reading</td></tr>
+          <tr><td data-th="Method">POST</td><td data-th="Path"><code>/v1/alerts/scan/{patient_id}</code></td><td data-th="Auth">&mdash;</td><td data-th="Description">Enqueue an alert scan for a patient</td></tr>
+          <tr><td data-th="Method">GET</td><td data-th="Path"><code>/v1/alerts</code></td><td data-th="Auth">&mdash;</td><td data-th="Description">List alerts, filterable by status</td></tr>
+          <tr><td data-th="Method">POST</td><td data-th="Path"><code>/v1/alerts/{id}/ack</code></td><td data-th="Auth">&mdash;</td><td data-th="Description">Acknowledge an alert (idempotent)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>A routing bug worth mentioning</h2>
+    <p>While pulling this together I found that the static UI's mount (<code>app.mount("/", StaticFiles(...))</code>) had been registered partway through the route file, ahead of several API routes. Starlette dispatches to the first matching route, and a root mount matches every path, so <code>/health</code>, the webhook, and the scan endpoint were silently unreachable behind it. Moved the mount to the end of the file, which also surfaced and let me delete a dead, unreachable second copy of the <code>/ack</code> handler &mdash; the kind of bug that's invisible until you actually enumerate the route table.</p>
+
+    <h2>Status &amp; what's next</h2>
+    <p>End to end today: ingest &rarr; validate &rarr; store &rarr; scan &rarr; alert &rarr; view/ack in the UI, with realistic seeded demo data. Auth is a static bearer token rather than JWT. The observability stack and guideline-grounded explanations are infrastructure without a feature behind them yet &mdash; both are next on the <a href="https://github.com/ManosGiann15/rpm-project/blob/main/RoadMap.md" target="_blank" rel="noopener">roadmap</a>, along with load testing and CI.</p>
+
+  </div>
+
+  <a class="next-proj reveal" href="sentiment-analysis.html">
+    <div>
+      <div class="k">Next project</div>
+      <h3>Sentiment analysis system</h3>
+    </div>
+    <span class="arrow">→</span>
+  </a>
+</section>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© 2026 Manos Giannakis</span>
+    <span>Athens, GR · Robotics · ML · Autonomy</span>
+  </div>
+</footer>
+
+<script src="../assets/js/project.js"></script>
+</body>
+</html>
