@@ -71,7 +71,7 @@ header.nav{
 .back-link:hover{color:var(--text)}
 
 /* ---------- page header ---------- */
-.proj-hero{padding:clamp(52px,8vw,88px) 0 clamp(36px,6vw,52px)}
+.proj-hero{padding-top:clamp(52px,8vw,88px);padding-bottom:clamp(36px,6vw,52px)}
 .proj-hero .ksmall{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-2)}
 .proj-hero h1{
   font-family:var(--display);font-weight:600;
