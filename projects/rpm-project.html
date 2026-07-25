@@ -53,6 +53,11 @@
       <li><strong>Demo data tooling</strong> &mdash; <code>scripts/seed_patients.py</code> seeds 50 patients with vitals and a realistic spread of alerts, and <code>scripts/generate_stream.py</code> emits an NDJSON vitals stream with an injected SpO2 desaturation event for replaying against the webhook.</li>
     </ul>
 
+    <figure class="figure dark" style="max-width:640px;margin:24px auto">
+      <img class="zoomable" src="../assets/projects/rpm-project/alerts-ui.png" alt="RPM Alerts UI: a table of SpO2 alerts with severity pills (HIGH/MEDIUM/LOW), NEW/ACKED status, and an ACK button">
+      <figcaption class="figure-cap">The alerts UI (<code>app/static/index.html</code>), rendered locally with representative sample data</figcaption>
+    </figure>
+
     <h2>Architecture</h2>
     <pre style="background:var(--bg-3);border:1px solid var(--line);border-radius:12px;padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--muted)"><code>        seed / stream scripts
                 │
@@ -101,6 +106,12 @@
     <span class="arrow">→</span>
   </a>
 </section>
+
+<div class="photo-lightbox" id="photoLightbox" aria-hidden="true">
+  <div class="photo-lightbox-backdrop" data-photo-close></div>
+  <button type="button" class="photo-lightbox-close" data-photo-close aria-label="Close">&times;</button>
+  <img id="photoLightboxImg" src="" alt="">
+</div>
 
 <footer class="foot">
   <div class="wrap foot-inner">
