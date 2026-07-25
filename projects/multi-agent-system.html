@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Negotiating multi-agent system — Manos Giannakis</title>
-<meta name="description" content="A collaborative multi-agent system with dynamic task allocation, negotiation protocols, and performance evaluation." />
+<meta name="description" content="A multi-agent garbage-collection simulation built on Jason/AgentSpeak: three agents negotiate tasks via a contract-net protocol, plan with A*, and are evaluated across 1,300+ simulation runs." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -20,40 +20,74 @@
 </header>
 
 <section class="proj-hero wrap">
-  <div class="ksmall reveal">Multi-agent systems</div>
-  <h1 class="reveal">Negotiating multi-agent system</h1>
-  <div class="dates reveal">University of Piraeus</div>
-  <p class="lede reveal">A collaborative multi-agent system with dynamic task allocation, negotiation protocols between agents, and performance evaluation across scenarios.</p>
+  <div class="ksmall reveal">Multi-agent systems · University of Piraeus</div>
+  <h1 class="reveal">Negotiating Multi-Agent System</h1>
+  <div class="dates reveal">Intelligent Agent Systems · January 2025</div>
+  <p class="lede reveal">Three agents share a 10&times;10 grid littered with garbage of varying reward, and have to decide <strong>who collects what</strong> without a central planner dictating the answer. Built on <strong>Jason/AgentSpeak</strong>, task allocation runs as a <strong>contract-net negotiation</strong> over each agent's <strong>A*</strong> path cost, re-planned on every pickup.</p>
   <div class="chips reveal">
-    <span class="chip">Multi-agent</span><span class="chip">Java</span><span class="chip">Negotiation</span>
+    <span class="chip">Jason / AgentSpeak</span><span class="chip">Java</span><span class="chip">Contract Net Protocol</span><span class="chip">A* Search</span><span class="chip">Multi-Agent Systems</span>
+  </div>
+  <div class="stat-row reveal">
+    <div class="stat"><div class="num">3</div><div class="lbl">Negotiating agents</div></div>
+    <div class="stat"><div class="num">10&times;10</div><div class="lbl">Grid world</div></div>
+    <div class="stat"><div class="num">1,301</div><div class="lbl">Simulation runs logged</div></div>
+    <div class="stat"><div class="num">7.90</div><div class="lbl">Mean total points / run</div></div>
   </div>
   <div class="cta-row reveal">
-    <!-- Point this at the real repo once you have it -->
-    <a class="btn btn-ghost" href="https://github.com/manosgiann15" target="_blank" rel="noopener">Code <span class="arrow">↗</span></a>
+    <a class="btn btn-primary" href="../assets/projects/multi-agent-system/Documentation.pdf" target="_blank" rel="noopener">View documentation <span class="arrow">↗</span></a>
+    <a class="btn btn-ghost" href="https://github.com/ManosGiann15/Multi-Agent-System-using-Jason-Agent-Speak" target="_blank" rel="noopener">Code <span class="arrow">↗</span></a>
   </div>
 </section>
 
 <section class="wrap">
   <div class="proj-body reveal">
-    <h2>The problem</h2>
-    <p>Describe the coordination problem the agents were solving — e.g. a set of tasks that needed to be allocated among agents with different capabilities/costs, without a central coordinator.</p>
 
-    <h2>What I built</h2>
+    <h2>The problem</h2>
+    <p>Split a shared workload across independent agents that don't take orders from anyone: a set of garbage items, each worth a different reward, scattered across a grid, and a handful of agents that each have to figure out which item is worth going after. There's no central scheduler assigning tasks by fiat &mdash; agents need a way to agree on who takes what so they don't collide on the same target or leave items uncollected, and that allocation has to keep working as items are collected and new ones respawn, not just once at the start.</p>
+
+    <h2>The environment</h2>
+    <p>The simulation is implemented as a Jason <code>Environment</code> extending its <code>GridWorldModel</code>, on a <strong>10&times;10 grid</strong> with walls that block movement. Three agents (A, B, C, rendered red/cyan/magenta) share the space, and garbage items spawn at random cells with one of four reward values (0.2, 0.4, 0.6, 0.8). Collecting an item respawns it elsewhere at a fresh reward, so there's always a live task queue rather than a fixed list that runs out &mdash; and every move costs a small penalty (0.01 points), so idle wandering is never free.</p>
+
     <ul>
-      <li><strong>Negotiation protocol</strong> — fill in which one (e.g. contract-net, auction-based) and why you chose it.</li>
-      <li><strong>Dynamic task allocation</strong> that adapts as agents join, leave, or change capacity.</li>
-      <li><strong>Evaluation framework</strong> to compare allocation strategies across scenarios (e.g. fairness, total cost, convergence speed).</li>
+      <li><strong>Agents</strong> perceive the grid through Jason percepts (garbage locations and rewards) and act by issuing <code>next(slot)</code> movement actions, defined in AgentSpeak plans.</li>
+      <li><strong>Allocation and pathfinding</strong> live in the Java environment class (<code>Env3</code>), which brokers who goes after which item and computes the route.</li>
     </ul>
 
-    <h2>Result</h2>
-    <p>Fill in what the evaluation showed and any interesting edge cases the negotiation protocol handled well or poorly.</p>
+    <h2>Task allocation: contract-net negotiation</h2>
+    <p>Instead of a fixed assignment, each garbage item is auctioned off: every agent's bid is its <strong>utility</strong> for that item &mdash; the item's reward minus the cost of the A* path to reach it &mdash; and the item goes to whichever agent values it most. That's a first pass over every open item. A second pass then guarantees no agent is left idle: any agent that didn't win an item in the first round is handed the nearest reachable one, even if it isn't the globally optimal pick, so task coverage never depends on the auction converging cleanly.</p>
 
-    <!-- GALLERY — replace with real screenshots (agent simulation, results charts, architecture diagram, etc.) -->
-    <div class="gallery">
-      <figure class="media ratio-4-3 is-empty"><div class="ph-t">Simulation run</div><div class="ph-s">assets/proj3-1.jpg</div></figure>
-      <figure class="media ratio-4-3 is-empty"><div class="ph-t">Architecture</div><div class="ph-s">assets/proj3-2.jpg</div></figure>
-      <figure class="media ratio-4-3 is-empty"><div class="ph-t">Results</div><div class="ph-s">assets/proj3-3.jpg</div></figure>
+    <h2>Pathfinding: A*</h2>
+    <p>Each bid's path cost, and each agent's actual route, comes from an <strong>A* search</strong> over the grid that respects walls and obstacles. Paths aren't computed once and forgotten: whenever an item is collected (its target disappears and a new one spawns) or an agent gets reassigned, every affected route is recalculated, so agents are always chasing a currently-valid target instead of a stale plan.</p>
+
+    <h2>Conflict resolution</h2>
+    <p>When two agents' bids would clash over the same item, priority went to the agent with the greater income &mdash; a simple, cheap-to-compute tie-breaker, but one that risked letting early leaders keep winning and starving a lower-scoring agent of tasks. That risk is exactly what the results below test for.</p>
+
+    <h2>Results</h2>
+    <p>A small 24-run pilot batch logged early on shows a real imbalance: Agent A and B pulled ahead while Agent C collected less than half as much on average &mdash; the fairness risk the income-priority rule invites. The fuller simulation log, <strong>1,301 runs</strong> committed alongside the code, tells a different story once the utility function is doing the weighing (reward minus path cost, not reward alone): all three agents converge to essentially the same average.</p>
+
+    <div class="rtable-wrap">
+      <table class="rtable rtable-stack">
+        <thead><tr><th>Run set</th><th>Agent A</th><th>Agent B</th><th>Agent C</th><th>Total (mean)</th></tr></thead>
+        <tbody>
+          <tr><td data-th="Run set">Pilot batch (24 runs)</td><td data-th="Agent A">2.43 &plusmn; 0.95</td><td data-th="Agent B">2.07 &plusmn; 0.91</td><td data-th="Agent C" class="hl">1.12 &plusmn; 0.77</td><td data-th="Total (mean)">5.61</td></tr>
+          <tr><td data-th="Run set">Full log (1,301 runs)</td><td data-th="Agent A">2.61 &plusmn; 0.93</td><td data-th="Agent B">2.64 &plusmn; 0.97</td><td data-th="Agent C" class="hl">2.65 &plusmn; 0.96</td><td data-th="Total (mean)">7.90</td></tr>
+        </tbody>
+      </table>
     </div>
+
+    <figure class="figure light">
+      <img class="zoomable" src="../assets/projects/multi-agent-system/agent-points-mean.png" alt="Bar chart of mean points collected per agent across 1,301 simulation runs, showing Agent A, B, and C at roughly 2.6 points each with overlapping error bars">
+      <figcaption class="figure-cap">Mean points per agent, 1,301 runs &mdash; error bars are &plusmn;1 std. dev.</figcaption>
+    </figure>
+
+    <figure class="figure light">
+      <img class="zoomable" src="../assets/projects/multi-agent-system/total-points-distribution.png" alt="Histogram of total points collected per run across 1,301 simulations, roughly bell-shaped and centered around 7.9">
+      <figcaption class="figure-cap">Total points collected per run, all three agents combined</figcaption>
+    </figure>
+
+    <h2>What I'd improve</h2>
+    <p>The income-priority tie-break is the piece I'd revisit first: it happens to average out over a long run, but nothing about it guarantees fairness on any single run, it's an emergent property of the utility function, not a designed one. A more deliberate version would resolve conflicts by comparing proximity directly, or track each agent's running total and bias contested items toward whoever is behind, rather than leaning entirely on reward-minus-cost to sort itself out.</p>
+
   </div>
 
   <a class="next-proj reveal" href="cone-detection.html">
