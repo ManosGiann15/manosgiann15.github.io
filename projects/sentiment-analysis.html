@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Sentiment analysis system — Manos Giannakis</title>
-<meta name="description" content="An NLP pipeline combining classic techniques and ML models, tuned for accuracy and computational efficiency for scalable deployment." />
+<meta name="description" content="A sentiment classification system for IMDB movie reviews: Bag-of-Words and SVM baselines compared against Bidirectional LSTM sequence models with GloVe embeddings, plus a small demo app." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -20,40 +20,130 @@
 </header>
 
 <section class="proj-hero wrap">
-  <div class="ksmall reveal">NLP · Machine learning</div>
+  <div class="ksmall reveal">NLP · Machine Learning · University of Piraeus</div>
   <h1 class="reveal">Sentiment analysis system</h1>
-  <div class="dates reveal">University of Piraeus</div>
-  <p class="lede reveal">An NLP pipeline combining classic text-processing techniques with ML models, tuned for accuracy and computational efficiency so it could run at scale rather than as a one-off notebook exercise.</p>
+  <div class="dates reveal">Advanced Data Analytics · January 2025</div>
+  <p class="lede reveal">A binary sentiment classifier for IMDB movie reviews, positive or negative, comparing a classic <strong>Bag-of-Words + SVM</strong> pipeline against <strong>Bidirectional LSTM</strong> sequence models with trainable and pretrained <strong>GloVe</strong> embeddings, then wrapped in a small demo app to try it on real reviews.</p>
   <div class="chips reveal">
-    <span class="chip">NLP</span><span class="chip">Python</span><span class="chip">scikit-learn</span>
+    <span class="chip">SVM</span><span class="chip">Bag-of-Words</span><span class="chip">GloVe</span>
+    <span class="chip">Bidirectional LSTM</span><span class="chip">TensorFlow / Keras</span><span class="chip">scikit-learn</span>
+  </div>
+  <div class="stat-row reveal">
+    <div class="stat"><div class="num">50K</div><div class="lbl">Labeled IMDB reviews</div></div>
+    <div class="stat"><div class="num">89.5%</div><div class="lbl">Best accuracy, TriGram BoW</div></div>
+    <div class="stat"><div class="num">86.4%</div><div class="lbl">SVM baseline accuracy</div></div>
+    <div class="stat"><div class="num">A100</div><div class="lbl">GPU, Colab Premium</div></div>
   </div>
   <div class="cta-row reveal">
-    <!-- Point this at the real repo once you have it -->
+    <a class="btn btn-primary" href="../assets/projects/sentiment-analysis/Documentation.pdf" target="_blank" rel="noopener">View documentation <span class="arrow">↗</span></a>
     <a class="btn btn-ghost" href="https://github.com/manosgiann15" target="_blank" rel="noopener">Code <span class="arrow">↗</span></a>
   </div>
 </section>
 
 <section class="wrap">
   <div class="proj-body reveal">
-    <h2>The problem</h2>
-    <p>Describe the dataset and task here — what text you were classifying, and why accuracy alone wasn't the whole story (e.g. needing something fast enough to run on large volumes of text).</p>
 
-    <h2>What I built</h2>
+    <h2>The problem</h2>
+    <p>Understanding the sentiment expressed in a piece of text is a core NLP problem, and movie reviews are a clean version of it: given a review, decide whether the writer liked the film or not. The interesting part isn't the label, it's the representation, turning free-form text into something a classifier can act on while keeping context, word order, and the sentiment itself intact. The system also had to be practical, not just accurate but efficient enough to train and run at a reasonable cost, since techniques like this apply directly to customer feedback analysis, opinion mining, and recommendation systems.</p>
+
+    <h2>The dataset</h2>
+    <p>The project uses the <strong>IMDB Review Dataset</strong>, a standard benchmark for sentiment analysis: 50,000 movie reviews, evenly split between positive and negative, so the classes never bias training. It's organized into a 25,000-review training set and a 25,000-review test set, with a further 10% of training held out as a validation split for monitoring and hyperparameter tuning during training.</p>
+
+    <figure class="figure light" style="max-width:420px;margin-left:auto;margin-right:auto">
+      <img class="zoomable" src="../assets/projects/sentiment-analysis/dataset-distribution.png" alt="Bar chart showing 25,000 positive and 25,000 negative reviews, a perfectly balanced dataset">
+      <figcaption class="figure-cap">25k / 25k positive-negative split, no class imbalance to correct for</figcaption>
+    </figure>
+
     <ul>
-      <li><strong>Preprocessing pipeline</strong> — tokenization, normalization, and feature extraction (TF-IDF / embeddings — fill in which one you used).</li>
-      <li><strong>Model comparison</strong> across classic ML approaches (e.g. logistic regression, SVM, naive Bayes) to find the best accuracy/latency trade-off.</li>
-      <li><strong>Tuning</strong> for computational efficiency so the system could scale beyond a single-batch evaluation.</li>
+      <li><strong>train/pos, train/neg</strong> — labeled training reviews, one file per review.</li>
+      <li><strong>test/pos, test/neg</strong> — held-out test reviews, never seen during training.</li>
+      <li><strong>val/pos, val/neg</strong> — a 10% slice of training data, used to track generalization and tune hyperparameters.</li>
     </ul>
 
-    <h2>Result</h2>
-    <p>Fill in the final metric (accuracy / F1) and anything notable about the deployment or evaluation setup.</p>
+    <h2>Preprocessing &amp; vectorization</h2>
+    <p>Before any model sees a review, the text is tokenized and normalized, punctuation stripped and everything lowercased with a translation table, so the vocabulary isn't split across casing and stray characters. From there, two different families of vectorization were used depending on the model:</p>
+    <ul>
+      <li><strong>Bag-of-Words</strong> — implemented with TensorFlow's <code>TextVectorization</code> layer, outputting binary vectors over a fixed vocabulary. Tried at three granularities: <strong>unigram</strong> (single words), <strong>bigram</strong>, and <strong>trigram</strong> (two and three consecutive tokens), each adding more context at the cost of a larger, sparser vocabulary.</li>
+      <li><strong>Word embeddings</strong> — for the sequence models, tokens are mapped to dense vectors either as <strong>trainable embeddings</strong> learned end-to-end with the task, or as <strong>pretrained GloVe</strong> vectors kept frozen to preserve their general semantic knowledge.</li>
+    </ul>
 
-    <!-- GALLERY — replace with real screenshots (confusion matrix, results table, demo UI, etc.) -->
-    <div class="gallery">
-      <figure class="media ratio-4-3 is-empty"><div class="ph-t">Results / metrics</div><div class="ph-s">assets/proj2-1.jpg</div></figure>
-      <figure class="media ratio-4-3 is-empty"><div class="ph-t">Pipeline diagram</div><div class="ph-s">assets/proj2-2.jpg</div></figure>
-      <figure class="media ratio-4-3 is-empty"><div class="ph-t">Demo / output</div><div class="ph-s">assets/proj2-3.jpg</div></figure>
+    <h2>Bag-of-Words models: unigram, bigram, trigram</h2>
+    <p>The first pass at classification used BoW vectors of increasing context, unigram, then bigram, then trigram, feeding a small dense classifier. Each step up in n-gram order captured more of the local word order that plain unigrams throw away, and accuracy did climb slightly with it (88.4% → 89.4% → 89.5%). But all three showed the same shape of problem: training loss kept falling while validation loss climbed almost immediately, a textbook overfitting signature that got harder to control as the n-gram vocabulary grew larger and sparser.</p>
+
+    <figure class="figure light" style="max-width:420px;margin-left:auto;margin-right:auto">
+      <img class="zoomable" src="../assets/projects/sentiment-analysis/ngram-overfitting-loss.png" alt="Training loss falling steadily while validation loss rises after the first couple of epochs, a typical overfitting curve">
+      <figcaption class="figure-cap">Training vs. validation loss , the overfitting pattern that showed up across every n-gram order</figcaption>
+    </figure>
+
+    <p>Trigram edged out the others on raw accuracy, but at a real cost: its training time was roughly <strong>2.8&times;</strong> that of the unigram model for a 1.1-point accuracy gain, a trade-off that mattered once GPU time was a constrained resource.</p>
+
+    <h2>Sequence models: Bidirectional LSTM</h2>
+    <p>BoW representations are order-blind past their n-gram window, so the next step was a proper sequence model. Reviews are tokenized into integer sequences and fed through an embedding layer into a <strong>Bidirectional LSTM</strong>, which reads each review both forward and backward and merges the two passes, giving the model context from both directions instead of only what came before a given word.</p>
+
+    <figure class="figure light">
+      <img class="zoomable" src="../assets/projects/sentiment-analysis/bilstm-architecture.png" alt="Bidirectional LSTM diagram: forward and backward LSTM layers merging at each timestep into an output layer">
+      <figcaption class="figure-cap">Bidirectional LSTM , forward and backward passes merged at every timestep</figcaption>
+    </figure>
+
+    <p>A dropout layer (rate 0.5) was added to fight the same overfitting problem seen in the BoW models, and the output layer is a single sigmoid neuron for the binary positive/negative decision. With <strong>trainable embeddings</strong> learned end-to-end, the model reached <strong>86.2% test accuracy</strong>, competitive with the BoW models but still not an improvement, so a version with <strong>pretrained GloVe</strong> embeddings (frozen, non-trainable) was tried next to see whether general-purpose word semantics would help more than task-specific ones. It landed lower, at <strong>83.4%</strong>, GloVe's general embeddings didn't carry enough IMDB-specific sentiment signal to beat embeddings learned directly on the task.</p>
+
+    <h2>Support Vector Machine baseline</h2>
+    <p>Alongside the neural approaches, a classic <strong>SVM with an RBF kernel</strong> was trained on <code>CountVectorizer</code> features (unigrams and bigrams, vocabulary capped at 5,000 for efficiency), with <code>C=1</code> and <code>gamma=scale</code>. It's the simplest pipeline in the comparison, and it held its own: <strong>86.35% test accuracy</strong>, with precision, recall, and F1 all close to that same number, meaning it wasn't just accurate on average but consistent across both classes, not skewed toward calling everything positive or negative.</p>
+
+    <h2>Results</h2>
+    <p>Across every method tried, the BoW n-gram models came out slightly ahead on raw accuracy, with <strong>TriGram peaking at 89.5%</strong>, but the SVM baseline got within three points of that at a fraction of the architectural complexity, and the sequence models didn't manage to translate their extra context into a clear win on this dataset. All training ran on an <strong>NVIDIA A100</strong> via Google Colab Premium.</p>
+
+    <div class="rtable-wrap">
+      <table class="rtable rtable-stack">
+        <thead><tr><th>Method</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1-Score</th><th>Training time</th></tr></thead>
+        <tbody>
+          <tr><td data-th="Method">Support Vector Machine</td><td data-th="Accuracy" class="hl">86.35%</td><td data-th="Precision">86.37%</td><td data-th="Recall">86.35%</td><td data-th="F1-Score">86.35%</td><td data-th="Training time">469.4s</td></tr>
+          <tr><td data-th="Method">UniGram (BoW)</td><td data-th="Accuracy" class="hl">88.4%</td><td data-th="Precision">87.6%</td><td data-th="Recall">89.5%</td><td data-th="F1-Score">88.5%</td><td data-th="Training time">401.2s</td></tr>
+          <tr><td data-th="Method">BiGram (BoW)</td><td data-th="Accuracy" class="hl">89.4%</td><td data-th="Precision">90.9%</td><td data-th="Recall">87.5%</td><td data-th="F1-Score">89.2%</td><td data-th="Training time">773.8s</td></tr>
+          <tr><td data-th="Method">TriGram (BoW)</td><td data-th="Accuracy" class="hl">89.5%</td><td data-th="Precision">89.4%</td><td data-th="Recall">89.6%</td><td data-th="F1-Score">89.5%</td><td data-th="Training time">1124.0s</td></tr>
+          <tr><td data-th="Method">Bidirectional LSTM (trainable)</td><td data-th="Accuracy" class="hl">86.2%</td><td data-th="Precision">87.6%</td><td data-th="Recall">84.3%</td><td data-th="F1-Score">85.9%</td><td data-th="Training time">340.0s</td></tr>
+          <tr><td data-th="Method">Bidirectional LSTM (GloVe)</td><td data-th="Accuracy" class="hl">83.4%</td><td data-th="Precision">83.4%</td><td data-th="Recall">83.3%</td><td data-th="F1-Score">83.4%</td><td data-th="Training time">294.0s</td></tr>
+        </tbody>
+      </table>
     </div>
+
+    <figure class="figure light" style="max-width:420px;margin-left:auto;margin-right:auto">
+      <img class="zoomable" src="../assets/projects/sentiment-analysis/final-confusion-matrix.png" alt="Final test set confusion matrix: 10638 true negatives, 1862 false positives, 1550 false negatives, 10950 true positives">
+      <figcaption class="figure-cap">Test-set confusion matrix , errors split roughly evenly between false positives and false negatives</figcaption>
+    </figure>
+
+    <h2>The app</h2>
+    <p>To make the model tangible instead of a row in a metrics table, I wrapped it in a small web app: browse a handful of movies, leave a written review, and get an instant positive or negative read on it from the trained classifier.</p>
+
+    <div class="figure-row">
+      <figure class="figure dark">
+        <img class="zoomable" src="../assets/projects/sentiment-analysis/app-home.png" alt="App home page showing movie poster cards for Blade Runner 2049 and Justice League">
+        <figcaption class="figure-cap">Home page , pick a movie to review</figcaption>
+      </figure>
+      <figure class="figure dark">
+        <img class="zoomable" src="../assets/projects/sentiment-analysis/app-home-hover.png" alt="Home page on hover, revealing the movie title, tagline, and a Leave a Review button">
+        <figcaption class="figure-cap">Hover state , title, tagline, and the call to action</figcaption>
+      </figure>
+    </div>
+
+    <figure class="figure dark" style="max-width:640px;margin:24px auto">
+      <img class="zoomable" src="../assets/projects/sentiment-analysis/app-review-form.png" alt="Leave a Review page with a text box and Submit button">
+      <figcaption class="figure-cap">The review form the classifier reads</figcaption>
+    </figure>
+
+    <div class="figure-row">
+      <figure class="figure dark">
+        <img class="zoomable" src="../assets/projects/sentiment-analysis/app-review-positive.png" alt="A glowing review submitted, with the app responding: Thank you for the Positive review!" style="aspect-ratio:4/3;object-fit:cover;object-position:top">
+        <figcaption class="figure-cap">"It really was a great movie..." &rarr; classified positive</figcaption>
+      </figure>
+      <figure class="figure dark">
+        <img class="zoomable" src="../assets/projects/sentiment-analysis/app-review-negative.png" alt="A scathing review submitted, with the app responding: We are sorry for your Negative review." style="aspect-ratio:4/3;object-fit:cover;object-position:top">
+        <figcaption class="figure-cap">"Worst movie I have ever seen..." &rarr; classified negative</figcaption>
+      </figure>
+    </div>
+
+    <p>Underneath the two-line UI it's the same pipeline as everything above: the review text is cleaned, vectorized, and passed to the trained classifier, and the result comes back before the modal even finishes animating in.</p>
+
   </div>
 
   <a class="next-proj reveal" href="multi-agent-system.html">
