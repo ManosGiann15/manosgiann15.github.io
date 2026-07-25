@@ -19,12 +19,12 @@
   --mono:"JetBrains Mono",ui-monospace,monospace;
 
   --maxw:880px;
-  --pad:clamp(20px,5vw,64px);
+  --pad:clamp(24px,6vw,64px);
 }
 
 *{box-sizing:border-box}
 figure{margin:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 body{

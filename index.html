@@ -35,12 +35,12 @@
     --mono:"JetBrains Mono",ui-monospace,monospace;
 
     --maxw:1080px;
-    --pad:clamp(20px,5vw,64px);
+    --pad:clamp(24px,6vw,64px);
   }
 
   *{box-sizing:border-box}
   figure{margin:0}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
   body{
@@ -584,7 +584,7 @@
       <img class="media ratio-16-9" style="object-fit:cover;object-position:center" src="assets/projects/multi-agent-system/jason.png" alt="Bar chart comparing mean points collected per agent across 1,301 simulation runs">
       <div class="body">
         <div class="ksmall">Multi-agent systems</div>
-        <h3>Negotiating multi-agent system</h3>
+        <h3>Negotiating Multi-Agent System</h3>
         <p>Three agents negotiate task allocation via a contract-net protocol over A* path cost in a Jason/AgentSpeak grid-world simulation, evaluated across 1,300+ runs.</p>
         <div class="chips"><span class="chip">Jason / AgentSpeak</span><span class="chip">Contract Net</span><span class="chip">A* Search</span></div>
       </div>
