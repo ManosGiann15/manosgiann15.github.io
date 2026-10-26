@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Philon contract — Manos Giannakis</title>
+<meta name="description" content="Freelance contract at Philon: built a per-frame classifier from scratch using knowledge distillation from a prompted teacher model and region pooling, then compressed the encoder ~5× and kept the GPU busy for 4.3× faster inference at 0.840 precision." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/project.css" />
+<link rel="icon" href="../assets/favicon.ico" sizes="any" />
+<link rel="icon" href="../assets/favicon-32.png" type="image/png" sizes="32x32" />
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html#top"><span class="dot"></span>manos.giannakis</a>
+    <a class="back-link" href="../index.html#projects">&larr; All Projects</a>
+  </div>
+</header>
+
+<section class="proj-hero wrap">
+  <div class="ksmall reveal">ML engineering · Contract</div>
+  <h1 class="reveal">Philon: Per-Frame Classifier</h1>
+  <div class="dates reveal">Freelance contract · Aug 2026 — Oct 2026</div>
+  <p class="lede reveal">A two-month freelance contract to deliver a <strong>per-frame classification model</strong>. The existing pipeline wasn't a usable starting point, so I <strong>built it from scratch</strong>: a hand-labelled test set, <strong>knowledge distillation</strong> from a prompted teacher model, <strong>region pooling</strong> in place of whole-frame mean pooling, a large model reaching <strong>0.895 precision</strong>, and a compact version with a <strong>~5&times; smaller encoder</strong> that runs <strong>4.3&times; faster</strong> while holding <strong>0.840 precision</strong>.</p>
+  <div class="chips reveal">
+    <span class="chip">Knowledge distillation</span><span class="chip">Region pooling</span><span class="chip">Evaluation design</span><span class="chip">Data labelling</span><span class="chip">Model compression</span><span class="chip">GPU pipelining</span>
+  </div>
+  <div class="stat-row reveal">
+    <div class="stat"><div class="num">0.840</div><div class="lbl">Precision, delivered model</div></div>
+    <div class="stat"><div class="num">0.926</div><div class="lbl">Accuracy, delivered model</div></div>
+    <div class="stat"><div class="num">4.3&times;</div><div class="lbl">Faster than my large model</div></div>
+    <div class="stat"><div class="num">1.72 ms</div><div class="lbl">Per frame, end to end</div></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="proj-body reveal">
+
+    <h2>The starting point</h2>
+    <p>The task was a model that classifies every frame of a video stream. There was an existing pipeline, but it had never been evaluated and wasn't something I could build on, so rather than patch it I started from scratch. The details of the client's data and use case are under NDA, so this page sticks to the numbers.</p>
+
+    <h2>What I built</h2>
+    <ul>
+      <li><strong>A test set to measure against</strong>: hand-labelled a held-out set, so every model was scored against the same ground truth instead of being judged by eye.</li>
+      <li><strong>Knowledge distillation from a teacher model</strong>: prompted a large teacher model to classify frames and used its outputs as training targets, so the student learned from far more labelled frames than I could label by hand.</li>
+      <li><strong>Region pooling</strong>: replaced whole-frame mean pooling with pooling over the specific regions where the target characteristics are most likely to appear.</li>
+      <li><strong>A large model</strong>: a classifier built around a ~400M-parameter encoder, reaching <strong>0.895 precision</strong> and <strong>0.933 accuracy</strong>.</li>
+      <li><strong>A compact version fit for deployment</strong>: swapped in an encoder with ~5&times; fewer parameters, keeping precision at <strong>0.840</strong> while running <strong>4.3&times; faster</strong> per frame.</li>
+      <li><strong>A GPU that never sits idle</strong>: reworked the inference pipeline so the next frame is always ready when the GPU finishes the last one, removing the "waiting / other" time entirely.</li>
+    </ul>
+
+    <h2>Why region pooling mattered</h2>
+    <p>Before, each frame's encoder features were mean-pooled over the whole image into one vector. That treats every part of the frame as equally informative, so the few regions that actually carry the signal get averaged together with everything else. After studying the problem, I found that the characteristics the model has to detect show up much more often in specific regions of the frame. Pooling features over those regions instead keeps the informative parts from being diluted by the rest, and it was the change that improved the metrics the most.</p>
+
+    <h2>Speed: large model vs compact model</h2>
+    <figure class="figure light">
+      <img class="zoomable" src="../assets/projects/philon/inference-time-per-frame.png" alt="Stacked bar chart of inference time per frame by stage: large model 7.37 ms (encoder 6.89 ms plus pool, head and waiting time) versus compact optimised model 1.72 ms (encoder 1.58 ms plus pool and head, no waiting)">
+      <figcaption class="figure-cap">Inference time per frame, split by stage: 7.37 ms &rarr; 1.72 ms, with the encoder going from 6.89 ms to 1.58 ms</figcaption>
+    </figure>
+    <p>With the large model working, the encoder was the bottleneck at 6.89&nbsp;ms of the 7.37&nbsp;ms frame. The smaller encoder brought that down to 1.58&nbsp;ms. The pool + head cost stayed about the same. The waiting overhead disappeared because I overlapped frame preparation with GPU compute, so the GPU is never idle between frames. Together that gives a 4.3&times; end-to-end speed-up.</p>
+
+    <h2>Quality: what compressing it cost</h2>
+    <figure class="figure light">
+      <img class="zoomable" src="../assets/projects/philon/classification-quality.png" alt="Dumbbell chart comparing the large model and the compact model on a held-out test set: precision 0.895 vs 0.840, recall 0.739 vs 0.761, F1 0.809 vs 0.798, accuracy 0.933 vs 0.926">
+      <figcaption class="figure-cap">Classification quality on the held-out test set: my large model (grey) vs the compact optimised model (orange)</figcaption>
+    </figure>
+    <div class="rtable-wrap">
+      <table class="rtable">
+        <thead><tr><th>Metric</th><th>Large model</th><th>Compact, optimised</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td>Accuracy</td><td>0.933</td><td>0.926</td><td>&minus;0.007</td></tr>
+          <tr><td>F1</td><td>0.809</td><td>0.798</td><td>&minus;0.011</td></tr>
+          <tr><td>Recall</td><td>0.739</td><td>0.761</td><td>+0.022</td></tr>
+          <tr><td>Precision</td><td>0.895</td><td>0.840</td><td>&minus;0.055</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Accuracy and F1 land within about a point of the large model, and recall goes up, so the compact model misses fewer positives. The cost is 5.5 points of precision. For a model running on every frame, a 4.3&times; cheaper pass was worth that trade, and the decision threshold can be tuned to recover precision if the use case calls for it.</p>
+
+    <h2>Outcome</h2>
+    <p>The engagement was scoped as a two-month contract. I handed over the labelled test set, the compact model, the optimised inference path, and the evaluation above.</p>
+
+  </div>
+
+  <a class="next-proj reveal" href="cone-detection.html">
+    <div>
+      <div class="k">Next project</div>
+      <h3>Cone detection &amp; pose estimation</h3>
+    </div>
+    <span class="arrow">→</span>
+  </a>
+</section>
+
+<div class="photo-lightbox" id="photoLightbox" aria-hidden="true">
+  <div class="photo-lightbox-backdrop" data-photo-close></div>
+  <button type="button" class="photo-lightbox-close" data-photo-close aria-label="Close">&times;</button>
+  <img id="photoLightboxImg" src="" alt="">
+</div>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© 2026 Manos Giannakis</span>
+    <span>Athens, GR · Robotics · ML · Autonomy</span>
+  </div>
+</footer>
+
+<script src="../assets/js/project.js"></script>
+</body>
+</html>

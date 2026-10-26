@@ -421,6 +421,20 @@
   </div>
 
   <div class="job reveal">
+    <div class="when">Aug 2026 — Oct 2026</div>
+    <div>
+      <h3>Machine Learning Engineer (Contract)</h3>
+      <div class="org">Philon · Freelance</div>
+      <ul>
+        <li>Two-month freelance contract to deliver a per-frame video classifier. The existing pipeline wasn't usable, so I <strong>built it from scratch</strong>, starting with a hand-labelled held-out test set.</li>
+        <li>Used <strong>knowledge distillation</strong>, prompting a teacher model to classify frames as training targets, and replaced whole-frame mean pooling with <strong>region pooling</strong> over the parts of the frame most likely to carry the signal, the largest single gain in the metrics.</li>
+        <li>Built a classifier around a ~400M-parameter encoder, reaching <strong>0.895 precision</strong> and <strong>0.933 accuracy</strong>.</li>
+        <li>Compressed it to an encoder with <strong>~5&times; fewer parameters</strong>, holding <strong>0.840 precision</strong>, and pipelined inference so the GPU is never idle, cutting inference from <strong>7.37 to 1.72 ms/frame (4.3&times; faster)</strong>. <a href="projects/philon.html" style="color:var(--accent-2);text-decoration:underline;text-underline-offset:3px">See the results &rarr;</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="job reveal">
     <div class="when">Sept 2024 — Sept 2025</div>
     <div>
       <h3>Head of Autonomous System</h3>
@@ -567,6 +581,19 @@
   </div>
 
   <div class="proj-grid">
+
+    <!-- PROJECT 0 -->
+    <a class="proj reveal" href="projects/philon.html">
+      <video class="media ratio-16-9" style="object-fit:cover;object-position:center 55%" autoplay muted loop playsinline preload="auto" poster="assets/projects/philon/humanoid-demo-poster.jpg" aria-label="Humanoid robot autonomously lifting the left box and placing it on top of the right box (3x speed)">
+        <source src="assets/projects/philon/humanoid-demo.mp4" type="video/mp4">
+      </video>
+      <div class="body">
+        <div class="ksmall">ML engineering · Contract</div>
+        <h3>Philon: per-frame classifier</h3>
+        <p>Freelance contract: built a per-frame classifier from scratch with knowledge distillation and region pooling, then shrank its encoder ~5&times; for 4.3&times; faster inference at 0.840 precision.</p>
+        <div class="chips"><span class="chip">Knowledge distillation</span><span class="chip">Region pooling</span><span class="chip">Model compression</span></div>
+      </div>
+    </a>
 
     <!-- PROJECT 1 -->
     <a class="proj reveal" href="projects/cone-detection.html">
