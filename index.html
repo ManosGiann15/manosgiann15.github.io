@@ -212,6 +212,18 @@
   .cert-card.is-link:hover{border-color:#33404f;transform:translateY(-2px)}
   .cert-card.is-static{opacity:.7;cursor:default}
 
+  /* recommendation letters */
+  .rec-card{border:1px solid var(--line);border-radius:14px;background:var(--bg-2);padding:26px;
+    display:flex;flex-direction:column;gap:18px;transition:.25s;cursor:pointer;
+    font:inherit;text-align:left;width:100%;color:inherit}
+  .rec-card:hover{border-color:#33404f;transform:translateY(-2px)}
+  .rec-card blockquote{margin:0;position:relative;padding-left:18px;border-left:2px solid var(--accent);
+    color:var(--text);font-size:16.5px;line-height:1.55}
+  .rec-card .who{margin-top:auto}
+  .rec-card .who-name{font-family:var(--display);font-weight:600;font-size:16px;color:var(--text)}
+  .rec-card .who-role{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:3px}
+  .rec-card .read{font-family:var(--mono);font-size:13px;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+
   /* certificate viewer modal */
   .cert-modal{position:fixed;inset:0;z-index:100;display:none}
   .cert-modal.open{display:block}
@@ -365,6 +377,7 @@
       <a href="#about">About</a>
       <a href="#work">Work</a>
       <a href="#research">Research</a>
+      <a href="#recommendations">References</a>
       <a href="#projects">Projects</a>
       <a href="#skills">Skills</a>
       <a href="#contact">Contact</a>
@@ -557,6 +570,35 @@
   </div>
 </section>
 
+<!-- ============ RECOMMENDATIONS ============
+     Each card opens its letter in the popup viewer (data-src).
+     To add one: drop the PDF in assets/letters/ and copy a card. -->
+<section id="recommendations" class="wrap">
+  <div class="sec-head reveal">
+    <div class="eyebrow">Recommendations</div>
+    <h2>In their words</h2>
+    <p>Letters from people I've worked with in industry and research. Click a card to read the full letter.</p>
+  </div>
+  <div class="cards2">
+    <button type="button" class="rec-card reveal" data-src="assets/letters/philon-recommendation.pdf">
+      <blockquote>&ldquo;He had outstanding analytical and communication skills, and I would gladly recommend him for technical roles or further academic study.&rdquo;</blockquote>
+      <div class="who">
+        <div class="who-name">Alexandros Petkos</div>
+        <div class="who-role">Founder, Philon</div>
+      </div>
+      <span class="read">read full letter &rarr;</span>
+    </button>
+    <button type="button" class="rec-card reveal" data-src="assets/letters/vouros-recommendation.pdf">
+      <blockquote>&ldquo;A fast learning person, with great attitude and motivation, creative, with knowledge, skills and willingness to expand his knowledge and professional horizons.&rdquo;</blockquote>
+      <div class="who">
+        <div class="who-name">Prof. George Vouros</div>
+        <div class="who-role">Director of the AI Lab, Dept. of Digital Systems, University of Piraeus</div>
+      </div>
+      <span class="read">read full letter &rarr;</span>
+    </button>
+  </div>
+</section>
+
 <!-- CERTIFICATE VIEWER MODAL -->
 <div class="cert-modal" id="certModal" aria-hidden="true">
   <div class="cert-modal-backdrop" data-close></div>
@@ -606,7 +648,8 @@
       </div>
     </a>
 
-    <!-- PROJECT 2 -->
+    <!-- HIDDEN: sentiment-analysis (remove this comment wrapper to show again)
+    PROJECT 2
     <a class="proj reveal" href="projects/sentiment-analysis.html">
       <img class="media ratio-16-9" style="object-fit:cover;object-position:center" src="assets/projects/sentiment-analysis/app-home-hover.png" alt="Demo app for the sentiment classifier: movie poster cards with a Leave a Review overlay">
       <div class="body">
@@ -616,6 +659,7 @@
         <div class="chips"><span class="chip">SVM</span><span class="chip">Bag-of-Words</span><span class="chip">Bidirectional LSTM</span></div>
       </div>
     </a>
+    -->
 
     <!-- PROJECT 3 -->
     <a class="proj reveal" href="projects/multi-agent-system.html">
@@ -628,7 +672,8 @@
       </div>
     </a>
 
-    <!-- PROJECT 4 -->
+    <!-- HIDDEN: rpm-project (remove this comment wrapper to show again)
+    PROJECT 4
     <a class="proj reveal" href="projects/rpm-project.html">
       <img class="media ratio-16-9" style="object-fit:cover;object-position:center" src="assets/projects/rpm-project/alerts-ui.png" alt="RPM Alerts UI: a table of SpO2 alerts with severity pills and an ACK action">
       <div class="body">
@@ -638,6 +683,7 @@
         <div class="chips"><span class="chip">FastAPI</span><span class="chip">PostgreSQL</span><span class="chip">Celery</span></div>
       </div>
     </a>
+    -->
 
   </div>
 </section>
@@ -728,7 +774,7 @@
       modal.setAttribute('aria-hidden','true');
       frame.src='';
     }
-    document.querySelectorAll('.cert-card.is-link[data-src]').forEach(card=>{
+    document.querySelectorAll('.cert-card.is-link[data-src], .rec-card[data-src]').forEach(card=>{
       card.addEventListener('click',()=>open(card.dataset.src));
     });
     modal.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',close));
